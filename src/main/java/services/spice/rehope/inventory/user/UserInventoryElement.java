@@ -1,5 +1,9 @@
 package services.spice.rehope.inventory.user;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import services.spice.rehope.inventory.element.model.InventoryElement;
+
 import java.sql.Time;
 
 /**
@@ -10,9 +14,17 @@ import java.sql.Time;
  * @param elementId Foreign key to the element.
  * @param unlockTime When this was unlocked.
  * @param unlockCode The code used to unlock it.
- * @param relatedUserId User id this is related to. (a streamer they donated to?)
- * @param value Value (hours / money?) TODO better name
+ * @param unlockContextUser Unlocked in the context of this user.
+ * @param unlockContextValue Unlock value.
  */
-public record UserInventoryElement(int id, int userId, int elementId, Time unlockTime, String unlockCode,
-                                   int relatedUserId, float value) {
+public record UserInventoryElement(int id, int userId, int elementId, Time unlockTime,
+                                   @Nullable String unlockCode,
+                                   @Nullable Integer unlockContextUser, @Nullable Float unlockContextValue) {
+
+
+    public boolean equalsElement(@NotNull InventoryElement element) {
+        return element.id() == elementId;
+    }
+
+
 }

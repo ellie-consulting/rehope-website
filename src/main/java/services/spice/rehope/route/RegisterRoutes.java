@@ -46,30 +46,15 @@ public class RegisterRoutes implements ServerRoute {
         javalin.get("/register", ctx -> {
             new VueComponent("hello-world").handle(ctx);
         });
-        javalin.get("/callback", callback);
-        javalin.post("/callback", callback);
+        javalin.get("/auth/oauth/google/callback", callback);
+        javalin.post("/auth/oauth/google/callback", callback);
 
         // Create the home page route
-        javalin.get("/", this::index);
+        javalin.get("/", new VueComponent("index"));
     }
 
     private VueComponent register(Context context) {
         return new VueComponent("hello-world");
-    }
-
-    private void index(Context ctx) {
-        VueComponent view;
-        CommonProfile profile = ctx.sessionAttribute("profile");
-        if (profile == null) {
-            // User is not logged in, show the login page
-            view = new VueComponent("login");
-        } else {
-            // User is logged in, show the home page
-            ctx.html("Welcome " + profile.getDisplayName() + "!");
-            view = new VueComponent("index");
-        }
-
-        view.handle(ctx);
     }
 
 }

@@ -12,17 +12,20 @@ public class PrincipleUser {
     private int id;
     private String username;
     private String email;
+    private UserRole role;
     private AuthProvider authProvider;
     private String providerId; // twitter id / google id / discord id. - maybe a field for all for socials
     private Time accountCreated;
     private Time lastLogin;
 
     public PrincipleUser(int id, String username, String email,
+                         UserRole role,
                          AuthProvider authProvider, String providerId,
                          Time accountCreated, Time lastLogin) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.role = role;
         this.authProvider = authProvider;
         this.providerId = providerId;
         this.accountCreated = accountCreated;
@@ -39,6 +42,10 @@ public class PrincipleUser {
 
     public String getEmail() {
         return email;
+    }
+
+    public UserRole getRole() {
+        return role;
     }
 
     public Time getAccountCreated() {

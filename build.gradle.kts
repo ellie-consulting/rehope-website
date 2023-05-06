@@ -20,6 +20,8 @@ dependencies {
 
     // Avaje
     implementation("io.avaje:avaje-config:3.2")
+    implementation("io.avaje:avaje-http-api:1.39")
+    annotationProcessor("io.avaje:avaje-http-javalin-generator:1.31")
     // inject
     implementation("io.avaje:avaje-inject:9.1-RC2")
     annotationProcessor("io.avaje:avaje-inject-generator:9.1-RC2")

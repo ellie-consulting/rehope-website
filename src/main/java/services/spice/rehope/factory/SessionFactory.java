@@ -13,13 +13,11 @@ public class SessionFactory {
     SessionHandler sqlSessionHandler(HikariDataSource dataSource) {
         SessionHandler sessionHandler = new SessionHandler();
         SessionCache sessionCache = new DefaultSessionCache(sessionHandler);
-        sessionCache.setSessionDataStore(
-                jdbcDataStoreFactory(dataSource).getSessionDataStore(sessionHandler)
-        );
+        sessionCache.setSessionDataStore(jdbcDataStoreFactory(dataSource).getSessionDataStore(sessionHandler));
         sessionHandler.setSessionCache(sessionCache);
         sessionHandler.setHttpOnly(true);
-        sessionHandler.setSameSite(HttpCookie.SameSite.STRICT);
-        sessionHandler.setSecureRequestOnly(true);
+//        sessionHandler.setSameSite(HttpCookie.SameSite.STRICT);
+//        sessionHandler.setSecureRequestOnly(true);
         return sessionHandler;
     }
 
@@ -27,6 +25,7 @@ public class SessionFactory {
         DatabaseAdaptor databaseAdaptor = new DatabaseAdaptor();
         databaseAdaptor.setDriverInfo(dataSource.getDriverClassName(), dataSource.getJdbcUrl());
         databaseAdaptor.setDatasource(dataSource);
+
         JDBCSessionDataStoreFactory jdbcSessionDataStoreFactory = new JDBCSessionDataStoreFactory();
         jdbcSessionDataStoreFactory.setDatabaseAdaptor(databaseAdaptor);
         return jdbcSessionDataStoreFactory;

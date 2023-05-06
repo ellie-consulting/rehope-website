@@ -22,9 +22,9 @@ public final class ServerBootstrap {
                 .ifPresent(serverCustomizer -> serverCustomizer.accept(javalin.cfg));
 
         // Register routes
-        for (ServerRoute serverRoute : beanScope.list(ServerRoute.class)) {
-            serverRoute.registerRoutes(javalin);
-        }
+//        for (ServerRoute serverRoute : beanScope.list(ServerRoute.class)) {
+//            serverRoute.registerRoutes(javalin);
+//        }
 
         javalin.start(host, port);
     }

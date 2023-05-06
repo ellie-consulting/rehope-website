@@ -1,4 +1,4 @@
-package services.spice.rehope.inventory.redeem;
+package services.spice.rehope.inventory.unlock;
 
 /**
  * Represents a code which can be redeemed
@@ -9,10 +9,9 @@ package services.spice.rehope.inventory.redeem;
  * @param redeemLimit Limit for this code to be redeemed, -1 for unlimited.
  * @param uses How many times this code has been used.
  * @param active If this code can be used.
- * @param unlockElementId The element this will unlock upon usage.
+ * @param unlockElementId The element this will unlock upon usage. TODO allow multiple unlocks
  */
-public record Code(int id, String code, int redeemLimit, int uses, boolean active,
-                   int unlockElementId) { // TODO allow multiple
+public record UnlockCode(int id, String code, int redeemLimit, int uses, boolean active, int unlockElementId) {
 
     /**
      * @return If this code has a limit to how many times it can be redeemed.

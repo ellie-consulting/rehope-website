@@ -74,11 +74,13 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
         int id = resultSet.getInt("id");
         String name = resultSet.getString("name");
         String email = resultSet.getString("email");
+        UserRole role = UserRole.valueOf(resultSet.getString("role"));
         AuthProvider authProvider = AuthProvider.valueOf(resultSet.getString("auth_provider")); // try
         String providerId = resultSet.getString("provider_id");
         Time accountCreated = resultSet.getTime("account_created");
         Time lastLogin = resultSet.getTime("last_login");
-        return new PrincipleUser(id, name, email, authProvider, providerId, accountCreated, lastLogin);
+
+        return new PrincipleUser(id, name, email, role, authProvider, providerId, accountCreated, lastLogin);
     }
 
     @Override
@@ -89,6 +91,7 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
                         "id SERIAL PRIMARY KEY," +
                         "username VARCHAR(255) NOT NULL UNIQUE," +
                         "email VARCHAR(255) NOT NULL UNIQUE," +
+                        "role VARCHAR(25) NOT NULL DEFAULT USER," +
                         "auth_provider VARCHAR(25) NOT NULL," +
                         "provider_id VARCHAR(255) NOT NULL," +
                         "account_created TIMESTAMP NOT NULL DEFAULT NOW()," +
