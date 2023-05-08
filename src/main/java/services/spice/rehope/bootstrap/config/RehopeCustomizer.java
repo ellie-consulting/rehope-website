@@ -9,9 +9,11 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.jetbrains.annotations.NotNull;
-import services.spice.rehope.user.principle.UserRole;
+import services.spice.rehope.endpoint.user.principle.UserRole;
+import services.spice.rehope.util.ContextUtils;
 
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 @Singleton
 public class RehopeCustomizer implements ServerCustomizer {
@@ -33,10 +35,34 @@ public class RehopeCustomizer implements ServerCustomizer {
 
         config.jetty.sessionHandler(() -> sessionHandler);
         config.accessManager((handler, context, permittedRoles) -> {
+            // no auth needed
+            if (permittedRoles.isEmpty()) {
+                handler.handle(context);
+                return;
+            }
+
+            Optional<UserRole> reqRole = ContextUtils.role(context);
+
+            // permitted roles are specified and no request, ignore.
+            if (reqRole.isEmpty()) {
+                context.status(HttpStatus.UNAUTHORIZED).json("Must be logged in to view this page.");
+                return;
+            }
+
             // Check roles
-            UserRole role = context.sessionAttribute("role");
-            if ((role == null && !permittedRoles.contains(UserRole.USER)) || !permittedRoles.contains(role)) {
-                context.status(HttpStatus.UNAUTHORIZED).json("Unauthorized");
+            UserRole userRole = reqRole.get();
+
+            // exact match
+            if (permittedRoles.contains(userRole)) {
+                handler.handle(context);
+                return;
+            }
+
+            // need to check if they have a greater or equal role than required.
+            if (permittedRoles.stream().anyMatch(testRole -> userRole.isEqualOrGreaterThan((UserRole) testRole))) {
+                handler.handle(context);
+            } else {
+                context.status(HttpStatus.UNAUTHORIZED).json("You cannot view this page.");
             }
         });
 

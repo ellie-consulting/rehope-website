@@ -3,7 +3,6 @@ package services.spice.rehope.bootstrap;
 import io.avaje.inject.BeanScope;
 import io.javalin.Javalin;
 import services.spice.rehope.bootstrap.config.ServerCustomizer;
-import services.spice.rehope.route.ServerRoute;
 
 /**
  * Starts the http server.
@@ -20,11 +19,6 @@ public final class ServerBootstrap {
         // Setup
         beanScope.getOptional(ServerCustomizer.class)
                 .ifPresent(serverCustomizer -> serverCustomizer.accept(javalin.cfg));
-
-        // Register routes
-//        for (ServerRoute serverRoute : beanScope.list(ServerRoute.class)) {
-//            serverRoute.registerRoutes(javalin);
-//        }
 
         javalin.start(host, port);
     }

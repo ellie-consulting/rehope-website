@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,6 +28,27 @@ public abstract class Repository<T> {
     public abstract String getTable();
 
     public abstract Logger getLogger();
+
+    @NotNull
+    public List<T> getAll() {
+        List<T> elements = new ArrayList<>();
+
+        try (Connection connection = datasource.getConnection()) {
+            PreparedStatement statement =
+                    connection.prepareStatement("SELECT * FROM " + getTable());
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                elements.add(mapResultSetToType(resultSet));
+            }
+
+        } catch (SQLException e) {
+            getLogger().error("failed to get repository elements");
+            e.printStackTrace();
+        }
+
+        return elements;
+    }
 
     public Optional<T> getById(int id) {
         try (Connection connection = datasource.getConnection()) {
