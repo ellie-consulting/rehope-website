@@ -88,7 +88,8 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
                                       @Nullable String unlockCode, @Nullable Integer unlockUserContext, @Nullable Float unlockValue) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO " + TABLE + " (user_id, element_id, unlock_code, unlock_user_context, unlock_value) VALUES (?, ?, ?, ?, ?)");
+                    "INSERT INTO " + TABLE + " (user_id, element_id, unlock_code, unlock_user_context, unlock_value) " +
+                            "VALUES (?, ?, ?, ?, ?)");
             statement.setInt(1, userId);
             statement.setInt(2, elementId);
             statement.setString(3, unlockCode);
@@ -112,7 +113,8 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
     public void addElementsToInventory(@NotNull List<UserInventoryElement> elements) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO " + TABLE + " (user_id, element_id, unlock_code, unlock_user_context, unlock_value) VALUES (?, ?, ?, ?, ?)");
+                    "INSERT INTO " + TABLE + " (user_id, element_id, unlock_code, unlock_user_context, unlock_value)" +
+                            " VALUES (?, ?, ?, ?, ?)");
 
             for (UserInventoryElement element : elements) {
                 statement.setInt(1, element.userId());

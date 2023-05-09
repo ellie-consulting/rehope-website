@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.spice.rehope.datasource.PostgreDatasource;
-import services.spice.rehope.endpoint.user.auth.AuthProvider;
+import services.spice.rehope.endpoint.user.auth.AuthProviderSource;
 import services.spice.rehope.model.Repository;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,63 +39,27 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
 
     @NotNull
     public List<PrincipleUser> getUsersByRole(@NotNull UserRole role) {
-        List<PrincipleUser> res = new ArrayList<>();
-
-        try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + TABLE + " WHERE role = ?");
-            statement.setString(1, role.name());
-
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                res.add(mapResultSetToType(resultSet));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("failed to get users by role role {}", role);
-        }
-
-        return res;
+        return getAllWithFilter("role", role.name());
     }
 
+    @NotNull
     public Optional<PrincipleUser> getUserByEmail(@NotNull String email) {
-        try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + TABLE + " WHERE email = ?");
-            statement.setString(1, email);
-
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(mapResultSetToType(resultSet));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("failed to get user by email {}", email);
-            e.printStackTrace();
-        }
-        return Optional.empty();
+        return getByField("email", email);
     }
 
+    @NotNull
     public Optional<PrincipleUser> getUserByProviderId(@NotNull String providerId) {
-        try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + TABLE + " WHERE provider_id = ?");
-            statement.setString(1, providerId);
-
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(mapResultSetToType(resultSet));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("failed to get user by provider id {}", providerId);
-            e.printStackTrace();
-        }
-        return Optional.empty();
+        return getByField("provider_id", providerId);
     }
 
-    public boolean createUser(PrincipleUser user) {
+    public boolean createUser(@NotNull PrincipleUser user) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement =
-                    connection.prepareStatement("INSERT INTO " + TABLE + " (name, email, role, " +
+                    connection.prepareStatement("INSERT INTO " + TABLE + " (username, email, role, " +
                             "auth_provider, provider_id, account_created, last_login) VALUES (?, ?, ?, ?, ?, ?, ?)" +
                             "RETURNING id");
 
-            statement.setString(1, user.getUsername());
+            statement.setObject(1, user.getUsername());
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getRole().name());
             statement.setString(4, user.getAuthProvider().name());
@@ -103,7 +67,7 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
             statement.setTime(6, user.getAccountCreated());
             statement.setTime(7, user.getLastLogin());
 
-            boolean execute = statement.execute();
+            statement.execute();
 
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.next()) {
@@ -120,18 +84,26 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
         return false;
     }
 
+    public boolean setUsername(int id, String newUsername) {
+        return updateFieldById(id, "username", newUsername);
+    }
+
+    public boolean updateLastLogin(int id) {
+        return updateFieldById(id, "last_login", Time.from(Instant.now()));
+    }
+
     @Override
     protected PrincipleUser mapResultSetToType(@NotNull ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
-        String name = resultSet.getString("name");
+        String name = resultSet.getString("username");
         String email = resultSet.getString("email");
         UserRole role = UserRole.valueOf(resultSet.getString("role"));
-        AuthProvider authProvider = AuthProvider.valueOf(resultSet.getString("auth_provider")); // try
+        AuthProviderSource authProviderSource = AuthProviderSource.valueOf(resultSet.getString("auth_provider")); // try
         String providerId = resultSet.getString("provider_id");
         Time accountCreated = resultSet.getTime("account_created");
         Time lastLogin = resultSet.getTime("last_login");
 
-        return new PrincipleUser(id, name, email, role, authProvider, providerId, accountCreated, lastLogin);
+        return new PrincipleUser(id, name, email, role, authProviderSource, providerId, accountCreated, lastLogin);
     }
 
     @Override
@@ -139,7 +111,7 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
         try (Connection connection = datasource.getConnection()) {
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
                     "id SERIAL PRIMARY KEY," +
-                    "username VARCHAR(255) NOT NULL UNIQUE," +
+                    "username VARCHAR(255) UNIQUE," +
                     "email VARCHAR(255) NOT NULL UNIQUE," +
                     "role VARCHAR(25) NOT NULL DEFAULT USER," +
                     "auth_provider VARCHAR(25) NOT NULL," +

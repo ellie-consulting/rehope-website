@@ -132,6 +132,15 @@ public class ElementRepository extends Repository<InventoryElement> {
         return inventoryElements;
     }
 
+    /**
+     * Delete an element by its id.
+     *
+     * @param id Id to delete by.
+     */
+    public boolean deleteElementById(int id) {
+        return deleteDataById(id);
+    }
+
     @Override
     protected InventoryElement mapResultSetToType(@NotNull ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
@@ -149,19 +158,17 @@ public class ElementRepository extends Repository<InventoryElement> {
 
     @Override
     protected void createTableIfNotExists() {
-        try {
-            try (Connection connection = datasource.getConnection()) {
-                connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-                        "id SERIAL PRIMARY KEY," +
-                        "element_id VARCHAR(255) NOT NULL UNIQUE," +
-                        "type VARCHAR(25) NOT NULL," +
-                        "unlock_objective VARCHAR(25)," +
-                        "unlock_value FLOAT," +
-                        "name VARCHAR(255) NOT NULL," +
-                        "description VARCHAR(255) NOT NULL," +
-                        "icon_uri VARCHAR(255) NOT NULL" +
-                        ")").execute();
-            }
+        try (Connection connection = datasource.getConnection()) {
+            connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
+                    "id SERIAL PRIMARY KEY," +
+                    "element_id VARCHAR(255) NOT NULL UNIQUE," +
+                    "type VARCHAR(25) NOT NULL," +
+                    "unlock_objective VARCHAR(25)," +
+                    "unlock_value FLOAT," +
+                    "name VARCHAR(255) NOT NULL," +
+                    "description VARCHAR(255) NOT NULL," +
+                    "icon_uri VARCHAR(255) NOT NULL" +
+                    ")").execute();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create element definition table", e);
         }

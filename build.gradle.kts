@@ -31,11 +31,6 @@ dependencies {
 // https://mvnrepository.com/artifact/org.pac4j/pac4j-oauth
     implementation("org.pac4j:pac4j-oauth:5.7.1")
 
-    // https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client
-    implementation("com.google.oauth-client:google-oauth-client:1.34.1")
-    // https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-jetty
-    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
-
     // https://mvnrepository.com/artifact/org.postgresql/postgresql/
     implementation("org.postgresql:postgresql:42.6.0")
     implementation("com.zaxxer:HikariCP:5.0.1")

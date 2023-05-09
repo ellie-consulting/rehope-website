@@ -2,7 +2,6 @@ package services.spice.rehope.endpoint.user.auth;
 
 import io.avaje.http.api.Controller;
 import io.avaje.http.api.Get;
-import io.avaje.http.api.Post;
 import io.javalin.http.Context;
 import jakarta.inject.Inject;
 import services.spice.rehope.model.ApiController;
@@ -23,17 +22,32 @@ public class AuthController extends ApiController {
             return;
         }
 
-        service.loginGoogle(context);
+        service.handleLogin(AuthProviderSource.GOOGLE, context);
+    }
+
+    @Get("/login/twitter")
+    public void twitterLogin(Context context) {
+        if (userId(context) != null) {
+            context.json("You are already logged in.");
+            return;
+        }
+
+        service.handleLogin(AuthProviderSource.TWITTER, context);
     }
 
     @Get("/oauth/google/callback")
     public void googleCallback(Context context) {
-        service.callbackGoogle(context);
+        service.handleCallback(AuthProviderSource.GOOGLE, context);
     }
 
-    @Post("/logout")
-    public void logout(Context context) {
+    @Get("/oauth/twitter/callback")
+    public void twitterCallback(Context context) {
+        service.handleCallback(AuthProviderSource.TWITTER, context);
+    }
 
+    @Get("/logout")
+    public void logout(Context context) {
+        service.handleLogout(context);
     }
 
 }

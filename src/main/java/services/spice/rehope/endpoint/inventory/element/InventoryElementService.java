@@ -36,8 +36,14 @@ public class InventoryElementService {
         return elementRepository.addItem(element);
     }
 
+    /**
+     * Delete an item definition by its id.
+     *
+     * @param id Id to delete.
+     * @return If deleted successfully.
+     */
     public boolean deleteItem(int id) {
-        return elementRepository.deleteDataById(id);
+        return elementRepository.deleteElementById(id);
     }
 
     /**

@@ -5,6 +5,6 @@ package services.spice.rehope.endpoint.user.social;
  *
  * @param userId foreign key
  */
-public record UserSocialMedia(long id, long userId, SocialMediaType socialMediaType, String socialMediaId) {
+public record UserSocialMedia(int id, int userId, SocialMediaType socialMediaType, String socialMediaId) {
 
 }

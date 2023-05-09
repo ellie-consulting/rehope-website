@@ -1,4 +1,4 @@
-package services.spice.rehope.endpoint.user;
+package services.spice.rehope.endpoint.user.principle;
 
 import io.avaje.http.api.Controller;
 import services.spice.rehope.model.ApiController;

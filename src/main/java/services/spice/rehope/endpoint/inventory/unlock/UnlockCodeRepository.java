@@ -67,18 +67,7 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
      * @return If anything was deleted.
      */
     public boolean deleteCode(@NotNull String code) {
-        try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + TABLE + " WHERE code = ?");
-            statement.setString(1, code);
-            int deleted = statement.executeUpdate();
-
-            return deleted > 0;
-        } catch (SQLException e) {
-            getLogger().error("failed to delete code {}", code);
-            e.printStackTrace();
-        }
-
-        return false;
+        return deleteData("code", code);
     }
 
     /**
@@ -89,19 +78,7 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
      * @return If the update was successful.
      */
     public boolean setCodeActive(@NotNull String code, boolean state) {
-        try (Connection connection = datasource.getConnection()) {
-            PreparedStatement updateStatement = connection.prepareStatement(
-                    "UPDATE " + TABLE + " SET active = ? WHERE code = ?");
-            updateStatement.setBoolean(1, state);
-            updateStatement.setString(2, code);
-
-            return updateStatement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            getLogger().error("failed to update state of code {} -> {}", code, state);
-            e.printStackTrace();
-        }
-
-        return false;
+        return updateField("code", code, "active", state);
     }
 
     /**

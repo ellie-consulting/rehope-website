@@ -1,9 +1,11 @@
 package services.spice.rehope.endpoint.user.principle;
 
 import io.javalin.security.RouteRole;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents a list of roles on the site.
+ * Defines roles for users on the site
+ * and also used for restricting pages.
  */
 public enum UserRole implements RouteRole {
     USER, CREATOR, ADMIN;
@@ -12,7 +14,7 @@ public enum UserRole implements RouteRole {
         return this == ADMIN;
     }
 
-    public boolean isEqualOrGreaterThan(UserRole role) {
+    public boolean isEqualOrGreaterThan(@NotNull UserRole role) {
         return this.ordinal() >= role.ordinal();
     }
 }

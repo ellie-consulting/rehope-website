@@ -1,12 +1,9 @@
-package services.spice.rehope.endpoint.user;
+package services.spice.rehope.endpoint.user.principle;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
-import services.spice.rehope.endpoint.user.principle.UserRole;
 import services.spice.rehope.endpoint.user.social.UserSocialsRepository;
-import services.spice.rehope.endpoint.user.principle.PrincipleUser;
-import services.spice.rehope.endpoint.user.principle.PrincipleUserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +30,14 @@ public class UserService {
 
     public boolean createUser(PrincipleUser user) {
         return principleUserRepository.createUser(user);
+    }
+
+    public boolean handleLogin(int userId) {
+        return principleUserRepository.updateLastLogin(userId);
+    }
+
+    public boolean updateUsername(int userId, String newUsername) {
+        return principleUserRepository.setUsername(userId, newUsername);
     }
 
     @NotNull

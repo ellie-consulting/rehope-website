@@ -99,6 +99,29 @@ public class UserSocialsRepository extends Repository<UserSocialMedia> {
     }
 
     /**
+     * Insert a new social media for a user.
+     *
+     * @param socialMedia Social media to insert.
+     * @return If it was successfully added.
+     */
+    public boolean addUserSocial(@NotNull UserSocialMedia socialMedia) {
+        try (Connection connection = datasource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO " + TABLE + " (user_id, social_media, social_media_id) VALUES (?, ?, ?)");
+            statement.setInt(1, socialMedia.userId());
+            statement.setString(2, socialMedia.socialMediaType().name());
+            statement.setString(3, socialMedia.socialMediaId());
+
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            getLogger().error("failed to insert user social media {}", socialMedia);
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
      * Delete a particular social media of a user.
      *
      * @param userId User to delete.
@@ -123,9 +146,9 @@ public class UserSocialsRepository extends Repository<UserSocialMedia> {
     }
 
     @Override
-    protected UserSocialMedia mapResultSetToType(ResultSet resultSet) throws SQLException {
-        long id = resultSet.getLong("id");
-        long userId = resultSet.getLong("user_id");
+    protected UserSocialMedia mapResultSetToType(@NotNull ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        int userId = resultSet.getInt("user_id");
         SocialMediaType socialMedia = SocialMediaType.valueOf(resultSet.getString("social_media"));
         String socialMediaId = resultSet.getString("social_media_id");
         return new UserSocialMedia(id, userId, socialMedia, socialMediaId);

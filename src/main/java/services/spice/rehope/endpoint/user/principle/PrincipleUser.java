@@ -1,6 +1,7 @@
 package services.spice.rehope.endpoint.user.principle;
 
-import services.spice.rehope.endpoint.user.auth.AuthProvider;
+import org.jetbrains.annotations.Nullable;
+import services.spice.rehope.endpoint.user.auth.AuthProviderSource;
 
 import java.sql.Time;
 
@@ -13,20 +14,20 @@ public class PrincipleUser {
     private String username;
     private String email;
     private UserRole role;
-    private AuthProvider authProvider;
+    private AuthProviderSource authProviderSource;
     private String providerId; // twitter id / google id / discord id. - maybe a field for all for socials
     private Time accountCreated;
     private Time lastLogin;
 
     public PrincipleUser(int id, String username, String email,
                          UserRole role,
-                         AuthProvider authProvider, String providerId,
+                         AuthProviderSource authProviderSource, String providerId,
                          Time accountCreated, Time lastLogin) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
-        this.authProvider = authProvider;
+        this.authProviderSource = authProviderSource;
         this.providerId = providerId;
         this.accountCreated = accountCreated;
         this.lastLogin = lastLogin;
@@ -40,6 +41,7 @@ public class PrincipleUser {
         this.id = id;
     }
 
+    @Nullable
     public String getUsername() { // will be set to random at user conception
         return username;
     }
@@ -64,8 +66,8 @@ public class PrincipleUser {
         this.lastLogin = lastLogin;
     }
 
-    public AuthProvider getAuthProvider() {
-        return authProvider;
+    public AuthProviderSource getAuthProvider() {
+        return authProviderSource;
     }
 
     public String getProviderId() {
