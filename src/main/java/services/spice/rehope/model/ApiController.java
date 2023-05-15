@@ -1,6 +1,8 @@
 package services.spice.rehope.model;
 
 import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
+import org.jetbrains.annotations.Nullable;
 import services.spice.rehope.endpoint.user.principle.UserRole;
 import services.spice.rehope.util.ContextUtils;
 
@@ -19,6 +21,15 @@ public abstract class ApiController {
         UserRole userRole = userRole(context);
 
         return userId != null && userRole != null && (userId == queryId || userRole.isStaff());
+    }
+
+    protected final boolean unauthorized(Context context, @Nullable String error) {
+        context.status(HttpStatus.UNAUTHORIZED);
+        if (error != null) {
+            context.result(error);
+        }
+
+        return false;
     }
 
 }

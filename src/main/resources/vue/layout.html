@@ -7,9 +7,150 @@
     </script>
     <title>RE:HOPE</title>
     @componentRegistration
+    <style>
+        .navbar {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-left .logo {
+            font-size: 24px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .navbar-left .button-group {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .navbar-left .button-group a {
+            display: block;
+            padding: 10px;
+            margin-right: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        .navbar-left .button-group .dropdown {
+            position: relative;
+        }
+
+        .navbar-left .button-group .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .navbar-left .button-group .dropdown:hover .dropdown-content {
+            display: block;
+            color: black
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-right .profile-button {
+            display: block;
+            padding: 10px;
+            margin-right: 10px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .navbar-right .profile-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .navbar-right .profile-button:hover + .profile-dropdown-content {
+            display: block;
+        }
+
+        .navbar-right .profile-dropdown-content a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .navbar-right .cog-icon {
+            font-size: 18px;
+            color: white;
+        }
+
+        .dropdown-content a {
+            color: black;
+        }
+    </style>
 </head>
 
 <body>
+<div class="navbar">
+    <div class="navbar-left">
+        <div class="logo">RE:HOPE</div>
+        <div class="button-group">
+            <a href="#">Home</a>
+            <div class="dropdown">
+                <a href="#">Talents</a>
+                <div class="dropdown-content">
+                    <a href="#">Gen:Fable</a>
+                    <a href="#">Gen:Xyber</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">Media</a>
+                <div class="dropdown-content">
+                    <a href="#">Featured</a>
+                    <a href="#">Streams</a>
+                    <a href="#">Videos</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">Contact Us</a>
+                <div class="dropdown-content">
+                    <a href="#">Contact</a>
+                    <a href="#">About Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="navbar-right">
+        <div class="navbar-buttons-dropdown">
+            <button class="profile-button">Profile</button>
+            <div class="profile-dropdown-content">
+                <a href="#">Account</a>
+            </div>
+        </div>
+        <div class="cog-icon">
+            <span>&#9881;</span>
+        </div>
+    </div>
+</div>
+
 <main id="main-vue" v-cloak>
     @routeComponent
 </main>
@@ -18,5 +159,4 @@
     app.mount("#main-vue");
 </script>
 </body>
-
 </html>

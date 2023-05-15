@@ -5,9 +5,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.avaje.inject.Bean;
 import io.avaje.inject.Factory;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.model.LoadingFactory;
 
 @Factory
-public class DatasourceFactory {
+public class DatasourceFactory extends LoadingFactory {
 
     @Bean
     static HikariDataSource dataSource() {

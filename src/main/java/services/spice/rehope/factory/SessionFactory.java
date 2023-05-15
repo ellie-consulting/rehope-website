@@ -5,9 +5,10 @@ import io.avaje.inject.Bean;
 import io.avaje.inject.Factory;
 import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.server.session.*;
+import services.spice.rehope.model.LoadingFactory;
 
 @Factory
-public class SessionFactory {
+public class SessionFactory extends LoadingFactory {
 
     @Bean
     SessionHandler sqlSessionHandler(HikariDataSource dataSource) {
@@ -16,8 +17,8 @@ public class SessionFactory {
         sessionCache.setSessionDataStore(jdbcDataStoreFactory(dataSource).getSessionDataStore(sessionHandler));
         sessionHandler.setSessionCache(sessionCache);
         sessionHandler.setHttpOnly(true);
-//        sessionHandler.setSameSite(HttpCookie.SameSite.STRICT);
-//        sessionHandler.setSecureRequestOnly(true);
+        sessionHandler.setSameSite(HttpCookie.SameSite.STRICT);
+        sessionHandler.setSecureRequestOnly(true);
         return sessionHandler;
     }
 

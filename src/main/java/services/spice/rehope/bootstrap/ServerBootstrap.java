@@ -2,6 +2,7 @@ package services.spice.rehope.bootstrap;
 
 import io.avaje.inject.BeanScope;
 import io.javalin.Javalin;
+import io.javalin.vue.VueComponent;
 import services.spice.rehope.bootstrap.config.ServerCustomizer;
 
 /**
@@ -19,6 +20,13 @@ public final class ServerBootstrap {
         // Setup
         beanScope.getOptional(ServerCustomizer.class)
                 .ifPresent(serverCustomizer -> serverCustomizer.accept(javalin.cfg));
+
+        javalin.get("/", new VueComponent("home"));
+        javalin.get("/login", new VueComponent("login"));
+        javalin.get("/register", new VueComponent("register"));
+
+        javalin.get("/admin/users", new VueComponent("view-accounts"));
+
 
         javalin.start(host, port);
     }

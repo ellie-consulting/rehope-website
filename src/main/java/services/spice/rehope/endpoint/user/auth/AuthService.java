@@ -10,8 +10,8 @@ import org.pac4j.javalin.JavalinWebContext;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import services.spice.rehope.endpoint.user.principle.PrincipleUserService;
 import services.spice.rehope.endpoint.user.principle.UserRole;
-import services.spice.rehope.endpoint.user.principle.UserService;
 import services.spice.rehope.endpoint.user.principle.PrincipleUser;
 import services.spice.rehope.util.ContextUtils;
 
@@ -26,11 +26,11 @@ import java.util.Optional;
 public class AuthService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
 
-    private final UserService userService;
+    private final PrincipleUserService userService;
     private final AuthProviders authProviders;
 
     @Inject
-    public AuthService(UserService userService, AuthProviders authProviders) {
+    public AuthService(PrincipleUserService userService, AuthProviders authProviders) {
         this.userService = userService;
         this.authProviders = authProviders;
     }

@@ -3,24 +3,21 @@ package services.spice.rehope.endpoint.user.principle;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
-import services.spice.rehope.endpoint.user.social.UserSocialsRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Interface to access users.
+ * Service for main information of users.
  */
 @Singleton
-public class UserService {
+public class PrincipleUserService {
 
     private final PrincipleUserRepository principleUserRepository;
-    private final UserSocialsRepository userSocialsRepository;
 
     @Inject
-    public UserService(PrincipleUserRepository principleUserRepository, UserSocialsRepository userSocialsRepository) {
+    public PrincipleUserService(PrincipleUserRepository principleUserRepository) {
         this.principleUserRepository = principleUserRepository;
-        this.userSocialsRepository = userSocialsRepository;
     }
 
     @NotNull

@@ -21,7 +21,7 @@ import java.util.Optional;
  * Stores socials of a user.
  */
 @Singleton
-public class UserSocialsRepository extends Repository<UserSocialMedia> {
+public class UserSocialsRepository extends Repository<UserSocial> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserSocialsRepository.class);
     private static final String TABLE = "user_social_media";
 
@@ -48,8 +48,8 @@ public class UserSocialsRepository extends Repository<UserSocialMedia> {
      * @return Their socials.
      */
     @NotNull
-    public Map<SocialMediaType, UserSocialMedia> getUserSocials(int userId) {
-        Map<SocialMediaType, UserSocialMedia> res = new EnumMap<>(SocialMediaType.class);
+    public Map<UserSocialPlatform, UserSocial> getUserSocials(int userId) {
+        Map<UserSocialPlatform, UserSocial> res = new EnumMap<>(UserSocialPlatform.class);
 
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM ? WHERE user_id = ?");
@@ -59,9 +59,9 @@ public class UserSocialsRepository extends Repository<UserSocialMedia> {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 // try/catch individual
-                UserSocialMedia userSocialMedia = mapResultSetToType(resultSet);
+                UserSocial userSocial = mapResultSetToType(resultSet);
 
-                res.put(userSocialMedia.socialMediaType(), userSocialMedia);
+                res.put(userSocial.platform(), userSocial);
             }
 
         } catch (SQLException e) {
@@ -80,7 +80,7 @@ public class UserSocialsRepository extends Repository<UserSocialMedia> {
      * @param type Type.
      * @return Their data.
      */
-    public Optional<UserSocialMedia> getUserSocial(int userId, @NotNull SocialMediaType type) {
+    public Optional<UserSocial> getUserSocial(int userId, @NotNull UserSocialPlatform type) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM ? WHERE user_id = ? AND social_media = ?");
             statement.setString(1, TABLE);
@@ -104,12 +104,12 @@ public class UserSocialsRepository extends Repository<UserSocialMedia> {
      * @param socialMedia Social media to insert.
      * @return If it was successfully added.
      */
-    public boolean addUserSocial(@NotNull UserSocialMedia socialMedia) {
+    public boolean addUserSocial(@NotNull UserSocial socialMedia) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO " + TABLE + " (user_id, social_media, social_media_id) VALUES (?, ?, ?)");
             statement.setInt(1, socialMedia.userId());
-            statement.setString(2, socialMedia.socialMediaType().name());
+            statement.setString(2, socialMedia.platform().name());
             statement.setString(3, socialMedia.socialMediaId());
 
             return statement.executeUpdate() > 0;
@@ -128,7 +128,7 @@ public class UserSocialsRepository extends Repository<UserSocialMedia> {
      * @param type Type to delete.
      * @return If any change.
      */
-    public boolean deleteUserSocial(int userId, @NotNull SocialMediaType type) {
+    public boolean deleteUserSocial(int userId, @NotNull UserSocialPlatform type) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM ? WHERE user_id = ? AND social_media = ?");
             statement.setString(1, getTable());
@@ -146,29 +146,28 @@ public class UserSocialsRepository extends Repository<UserSocialMedia> {
     }
 
     @Override
-    protected UserSocialMedia mapResultSetToType(@NotNull ResultSet resultSet) throws SQLException {
+    protected UserSocial mapResultSetToType(@NotNull ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         int userId = resultSet.getInt("user_id");
-        SocialMediaType socialMedia = SocialMediaType.valueOf(resultSet.getString("social_media"));
+        UserSocialPlatform socialMedia = UserSocialPlatform.valueOf(resultSet.getString("social_media"));
         String socialMediaId = resultSet.getString("social_media_id");
-        return new UserSocialMedia(id, userId, socialMedia, socialMediaId);
+        return new UserSocial(id, userId, socialMedia, socialMediaId);
     }
 
     @Override
     protected void createTableIfNotExists() {
-        try {
-            try (Connection connection = datasource.getConnection()) {
-                connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-                        "id SERIAL PRIMARY KEY," +
-                        "user_id INT NOT NULL," +
-                        "social_media TEXT," +
-                        "social_media_id TEXT," +
-                        "CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES " + PrincipleUserRepository.TABLE + "(id) ON DELETE CASCADE," +
-                        "CONSTRAINT uk_user_social_media UNIQUE (user_id, social_media)" + // unique type per user
-                        ");").execute();
-            }
+        try (Connection connection = datasource.getConnection()) {
+            connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
+                    "id SERIAL PRIMARY KEY," +
+                    "user_id INT NOT NULL," +
+                    "social_media TEXT," +
+                    "social_media_id TEXT," +
+                    "CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES " + PrincipleUserRepository.TABLE + "(id) ON DELETE CASCADE," +
+                    "CONSTRAINT uk_user_social_media UNIQUE (user_id, social_media)" + // unique type per user
+                    ");").execute();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create user socials table", e);
+
         }
     }
 }
