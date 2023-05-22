@@ -29,13 +29,13 @@ public class UnlockController extends ApiController {
         return service.getAllCodes();
     }
 
-    @Post("/new")
+    @Post
     @EndpointRoles(UserRole.ADMIN)
     public boolean addCode(UnlockCode code) {
         return service.createCode(code);
     }
 
-    @Delete("/delete")
+    @Delete
     @EndpointRoles(UserRole.ADMIN)
     public boolean deleteCode(String code) {
         return service.deleteCode(code);

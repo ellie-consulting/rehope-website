@@ -42,13 +42,13 @@ public class UserInventoryController extends ApiController {
         return inventoryService.getInventoryInContext(userId, streamerId);
     }
 
-    @Post("/add")
+    @Post
     @EndpointRoles(UserRole.ADMIN)
     public boolean addItem(int userId, int elementId) {
         return inventoryService.addToInventory(userId, elementId);
     }
 
-    @Delete("/remove")
+    @Delete
     @EndpointRoles(UserRole.ADMIN)
     public void removeItem(int userId, int elementId, @QueryParam Integer userContext) {
         inventoryService.deleteItemFromInventory(userId, elementId, userContext);

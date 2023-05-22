@@ -35,7 +35,7 @@ public class UserSocialsController extends ApiController {
         context.json(service.getUserSocials(userId).values(), UserSocial.class);
     }
 
-    @Post("/connect")
+    @Post
     public UserSocial connect(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
         if (!assertSelfOrStaff(context, userId)) {
             unauthorized(context, "You can only perform this action on your own account.");
@@ -47,7 +47,7 @@ public class UserSocialsController extends ApiController {
         return service.getUserSocial(userId, platform).orElse(null);
     }
 
-    @Delete("/delete")
+    @Delete
     public boolean unlink(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
         if (platform == null) {
             context.status(HttpStatus.BAD_REQUEST);

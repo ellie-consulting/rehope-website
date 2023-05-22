@@ -1,9 +1,6 @@
 package services.spice.rehope.endpoint.inventory.element;
 
-import io.avaje.http.api.Controller;
-import io.avaje.http.api.Delete;
-import io.avaje.http.api.Get;
-import io.avaje.http.api.Post;
+import io.avaje.http.api.*;
 import jakarta.inject.Inject;
 import services.spice.rehope.endpoint.EndpointRoles;
 import services.spice.rehope.endpoint.inventory.element.model.InventoryElement;
@@ -27,17 +24,17 @@ public class InventoryElementController extends ApiController {
         return elementService.getAll();
     }
 
-    @Post("/add")
+    @Post
     public boolean add(InventoryElement element) {
         return elementService.addItem(element);
     }
 
-    @Delete("/remove")
+    @Delete
     public boolean remove(int elementId) {
         return elementService.deleteItem(elementId);
     }
 
-    @Post("/update")
+    @Patch
     public InventoryElement update(InventoryElement element) {
         if (elementService.updateElement(element)) {
             return element;

@@ -27,7 +27,6 @@ public final class ServerBootstrap {
 
         javalin.get("/admin/users", new VueComponent("view-accounts"));
 
-
         javalin.start(host, port);
     }
 

@@ -1,6 +1,5 @@
 package services.spice.rehope.model;
 
-import org.eclipse.jetty.util.IO;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f776b3f-d51d-4673-b2ee-792826c843ab" name="Changes" comment="more refractoring">
+    <list default="true" id="5f776b3f-d51d-4673-b2ee-792826c843ab" name="Changes" comment="media service things + preferences + more socials + some frontend">
       <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
@@ -12,48 +12,14 @@
       <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/api-keys/youtube-key.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/oauth-credentials/google.properties" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/oauth-credentials/twitter.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/FeaturedMediaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/MediaCache.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/MediaChannelRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/MediaController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/MediaService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/model/Media.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/model/MediaCreator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/model/MediaProfile.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/model/MediaType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/media/youtube/YouTubeClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/preferences/PreferencesController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/preferences/PreferencesRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/preferences/PreferencesService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/preferences/UserPreferences.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocialsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocialsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/MediaClientFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/model/LoadingFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/vue/views/home.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/vue/views/view-accounts.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/bootstrap/ServerBootstrap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/bootstrap/ServerBootstrap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/auth/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/auth/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/auth/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/auth/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/principle/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/principle/PrincipleUserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/principle/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/principle/PrincipleUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/SocialMediaType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocialPlatform.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocialMedia.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocial.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocialsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocialsRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/DatasourceFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/DatasourceFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/GsonFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/GsonFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/OAuthFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/OAuthFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/SessionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/factory/SessionFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/model/ApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/model/ApiController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/model/Repository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/model/Repository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/vue/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/vue/layout.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/vue/views/hello-world.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/vue/views/index.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/vue/views/login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/vue/views/login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/inventory/element/InventoryElementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/inventory/element/InventoryElementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/inventory/unlock/UnlockController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/inventory/unlock/UnlockController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/inventory/user/UserInventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/inventory/user/UserInventoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocialsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/endpoint/user/social/UserSocialsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/services/spice/rehope/model/LoadingFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/services/spice/rehope/model/LoadingFactory.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -240,7 +206,27 @@
       <workItem from="1683734271734" duration="6000" />
       <workItem from="1683803786320" duration="20440000" />
       <workItem from="1683919126605" duration="2000" />
-      <workItem from="1684142025215" duration="11055000" />
+      <workItem from="1684142025215" duration="11544000" />
+      <workItem from="1684232344263" duration="239000" />
+      <workItem from="1684232609695" duration="1000" />
+      <workItem from="1684235239525" duration="221000" />
+      <workItem from="1684235508330" duration="7000" />
+      <workItem from="1684235571808" duration="803000" />
+      <workItem from="1684248660719" duration="695000" />
+      <workItem from="1684492823456" duration="11000" />
+      <workItem from="1684493373748" duration="10000" />
+      <workItem from="1684493911118" duration="35000" />
+      <workItem from="1684494040052" duration="114000" />
+      <workItem from="1684496778041" duration="5000" />
+      <workItem from="1684497349607" duration="6000" />
+      <workItem from="1684498268253" duration="17000" />
+      <workItem from="1684500124019" duration="6000" />
+      <workItem from="1684500446650" duration="8000" />
+      <workItem from="1684543359994" duration="20000" />
+      <workItem from="1684599469755" duration="11000" />
+      <workItem from="1684738536615" duration="82000" />
+      <workItem from="1684744111666" duration="18000" />
+      <workItem from="1684769878550" duration="110000" />
     </task>
     <task id="LOCAL−00001" summary="initial commit w db, princp user + inventory">
       <created>1683313627644</created>
@@ -266,7 +252,13 @@
       <option name="presentableId" value="LOCAL−00004" />
       <updated>1683631356939</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL−00005" summary="media service things + preferences + more socials + some frontend">
+      <created>1684155928643</created>
+      <option name="number" value="LOCAL−00005" />
+      <option name="presentableId" value="LOCAL−00005" />
+      <updated>1684155928643</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -289,7 +281,9 @@
     <MESSAGE value="create acc w oauth + sess attrs + access man + refractor + more controllers" />
     <MESSAGE value="more refractoring +" />
     <MESSAGE value="more refractoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="more refractoring" />
+    <MESSAGE value="media service things + preferences + more socials" />
+    <MESSAGE value="media service things + preferences + more socials + some frontend" />
+    <option name="LAST_COMMIT_MESSAGE" value="media service things + preferences + more socials + some frontend" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
