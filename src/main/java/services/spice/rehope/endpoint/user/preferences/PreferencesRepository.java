@@ -1,5 +1,6 @@
 package services.spice.rehope.endpoint.user.preferences;
 
+import io.avaje.inject.RequiresBean;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Singleton
+@RequiresBean(PrincipleUserRepository.class)
 public class PreferencesRepository extends Repository<UserPreferences> {
     private static final String TABLE = "user_preferences";
     private static final Logger LOGGER = LoggerFactory.getLogger(PreferencesRepository.class);

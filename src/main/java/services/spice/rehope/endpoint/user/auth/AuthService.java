@@ -15,8 +15,8 @@ import services.spice.rehope.endpoint.user.principle.UserRole;
 import services.spice.rehope.endpoint.user.principle.PrincipleUser;
 import services.spice.rehope.util.ContextUtils;
 
-import java.sql.Time;
-import java.time.LocalTime;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -42,34 +42,17 @@ public class AuthService {
      */
     public void handleLogin(@NotNull AuthProviderSource source, @NotNull Context context) {
         LOGGER.info("handleLogin({})", source);
-        authProviders.handleLogin(source, context);
-    }
-
-    /**
-     * Handle a callback from an auth provider..
-     * </br>
-     * If no profile is found from their selection,
-     * we will send them back to login page.
-     * </br>
-     * If the user's email exists, we will log them in,
-     * otherwise we will create their profile.
-     * </br>
-     * Finally, we will update their session attributes.
-     *
-     * @param context Request context.
-     */
-    public void handleCallback(@NotNull AuthProviderSource source, @NotNull Context context) {
-        LOGGER.info("handleCallback({})", source);
-        authProviders.handleCallback(context);
 
         ProfileManager manager = new ProfileManager(new JavalinWebContext(context), JEESessionStore.INSTANCE);
         Optional<CommonProfile> optProfile = manager.getProfile(CommonProfile.class);
 
         if (optProfile.isEmpty()) {
-            LOGGER.info("No profile in context, returning to login");
-            handleLogin(source, context); // todo could this cause loop?
+            LOGGER.info("handleLogin({}) - context has no auth profile", source);
+            authProviders.handleLogin(source, context);
             return;
         }
+
+        LOGGER.info("handleLogin({}) - profile present, logging on context", source);
 
         CommonProfile profile = optProfile.get();
         String email = profile.getEmail();
@@ -91,7 +74,26 @@ public class AuthService {
         }
 
         ContextUtils.setupSessionAttributes(user, context);
-        LOGGER.info("{} logged in successfully", user.getId());
+        LOGGER.info("{} logged in successfully, redirecting home", user.getId());
+        context.redirect("/");
+    }
+
+    /**
+     * Handle a callback from an auth provider..
+     * </br>
+     * If no profile is found from their selection,
+     * we will send them back to login page.
+     * </br>
+     * If the user's email exists, we will log them in,
+     * otherwise we will create their profile.
+     * </br>
+     * Finally, we will update their session attributes.
+     *
+     * @param context Request context.
+     */
+    public void handleCallback(@NotNull AuthProviderSource source, @NotNull Context context) {
+        LOGGER.info("handleCallback({})", source);
+        authProviders.handleCallback(context);
     }
 
     /**
@@ -117,8 +119,10 @@ public class AuthService {
      * @return Converted
      */
     private PrincipleUser createUserFromProfile(CommonProfile profile, AuthProviderSource authProviderSource) {
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+
         return new PrincipleUser(0, null, profile.getEmail(), UserRole.USER,
-                authProviderSource, profile.getId(), Time.valueOf(LocalTime.now()), Time.valueOf(LocalTime.now()));
+                authProviderSource, profile.getId(), now, now);
     }
 
 }

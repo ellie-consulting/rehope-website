@@ -32,6 +32,13 @@ public class AuthProviders {
         new SecurityHandler(config, source.getClientId()).handle(context);
     }
 
+    /**
+     * Handle a callback.
+     * </br>
+     * It will then redirect the user back to the login page.
+     *
+     * @param context Request context.
+     */
     public void handleCallback(@NotNull Context context) {
         callbackHandler.handle(context);
     }

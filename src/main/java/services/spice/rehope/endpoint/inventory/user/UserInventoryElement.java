@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import services.spice.rehope.endpoint.inventory.element.model.InventoryElement;
 
-import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * Represents an element in a user's inventory.
@@ -17,7 +17,7 @@ import java.sql.Time;
  * @param unlockContextUser Unlocked in the context of this user.
  * @param unlockContextValue Unlock value.
  */
-public record UserInventoryElement(int id, int userId, int elementId, Time unlockTime,
+public record UserInventoryElement(int id, int userId, int elementId, Timestamp unlockTime,
                                    @Nullable String unlockCode,
                                    @Nullable Integer unlockContextUser, @Nullable Float unlockContextValue) {
 

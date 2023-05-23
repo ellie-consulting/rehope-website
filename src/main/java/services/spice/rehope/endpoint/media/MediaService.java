@@ -1,5 +1,6 @@
 package services.spice.rehope.endpoint.media;
 
+import io.avaje.inject.PostConstruct;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import services.spice.rehope.endpoint.media.model.Media;
@@ -23,12 +24,10 @@ public class MediaService {
         this.featuredRepository = featuredRepository;
         this.channelRepository = channelRepository;
         this.userService = userService;
-
-        // ok lets
-        fetchWatchingUsers();
     }
 
-    private void fetchWatchingUsers() {
+    @PostConstruct
+    public void fetchWatchingUsers() {
         List<MediaCreator> creators = channelRepository.getAll();
         for (MediaCreator creator : creators) {
             mediaCache.setUserTracking(creator.userId(), creator.channelId());

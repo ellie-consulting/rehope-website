@@ -1,5 +1,6 @@
 package services.spice.rehope.endpoint.media;
 
+import io.avaje.inject.RequiresBean;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Singleton
+@RequiresBean(PrincipleUserRepository.class)
 public class FeaturedMediaRepository extends Repository<Media> {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggerFactory.class);
     private static final String TABLE = "featured_media";
@@ -30,7 +32,8 @@ public class FeaturedMediaRepository extends Repository<Media> {
     }
 
     @Override
-    public @NotNull List<Media> getAll() {
+    @NotNull
+    public List<Media> getAll() {
         // todo move to redis in future
         if (featuredContent == null) {
             featuredContent = super.getAll();
@@ -105,7 +108,7 @@ public class FeaturedMediaRepository extends Repository<Media> {
                     "video_url VARCHAR(64) UNIQUE NOT NULL" +
                     ");").execute();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to create user settings table", e);
+            throw new RuntimeException("Failed to create featured media table", e);
         }
     }
 }

@@ -10,12 +10,12 @@ import services.spice.rehope.endpoint.user.auth.AuthProviderSource;
 import services.spice.rehope.model.Repository;
 
 import java.sql.*;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Data handling for users.
+ * Primary data handling for users.
  */
 @Singleton
 public class PrincipleUserRepository extends Repository<PrincipleUser> {
@@ -64,8 +64,8 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
             statement.setString(3, user.getRole().name());
             statement.setString(4, user.getAuthProvider().name());
             statement.setString(5, user.getProviderId());
-            statement.setTime(6, user.getAccountCreated());
-            statement.setTime(7, user.getLastLogin());
+            statement.setTimestamp(6, user.getAccountCreated());
+            statement.setTimestamp(7, user.getLastLogin());
 
             statement.execute();
 
@@ -89,7 +89,7 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
     }
 
     public boolean updateLastLogin(int id) {
-        return updateFieldById(id, "last_login", Time.from(Instant.now()));
+        return updateFieldById(id, "last_login", Timestamp.valueOf(LocalDateTime.now()));
     }
 
     @Override
@@ -100,8 +100,8 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
         UserRole role = UserRole.valueOf(resultSet.getString("role"));
         AuthProviderSource authProviderSource = AuthProviderSource.valueOf(resultSet.getString("auth_provider")); // try
         String providerId = resultSet.getString("provider_id");
-        Time accountCreated = resultSet.getTime("account_created");
-        Time lastLogin = resultSet.getTime("last_login");
+        Timestamp accountCreated = resultSet.getTimestamp("account_created");
+        Timestamp lastLogin = resultSet.getTimestamp("last_login");
 
         return new PrincipleUser(id, name, email, role, authProviderSource, providerId, accountCreated, lastLogin);
     }
@@ -113,7 +113,7 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
                     "id SERIAL PRIMARY KEY," +
                     "username VARCHAR(255) UNIQUE," +
                     "email VARCHAR(255) NOT NULL UNIQUE," +
-                    "role VARCHAR(25) NOT NULL DEFAULT USER," +
+                    "role VARCHAR(25) NOT NULL DEFAULT 'USER'," +
                     "auth_provider VARCHAR(25) NOT NULL," +
                     "provider_id VARCHAR(255) NOT NULL," +
                     "account_created TIMESTAMP NOT NULL DEFAULT NOW()," +

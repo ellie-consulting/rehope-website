@@ -1,5 +1,6 @@
 package services.spice.rehope.endpoint.user.social;
 
+import io.avaje.inject.RequiresBean;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * Stores socials of a user.
  */
 @Singleton
+@RequiresBean(PrincipleUserRepository.class)
 public class UserSocialsRepository extends Repository<UserSocial> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserSocialsRepository.class);
     private static final String TABLE = "user_social_media";

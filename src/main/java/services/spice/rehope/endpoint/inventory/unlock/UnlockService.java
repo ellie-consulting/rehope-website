@@ -38,8 +38,6 @@ public class UnlockService {
         return codeRepository.setCodeActive(code, newState);
     }
 
-
-
     /**
      * Redeem a code for a user.
      * </br>

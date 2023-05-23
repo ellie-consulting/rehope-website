@@ -17,7 +17,7 @@ public class SessionFactory extends LoadingFactory {
         sessionCache.setSessionDataStore(jdbcDataStoreFactory(dataSource).getSessionDataStore(sessionHandler));
         sessionHandler.setSessionCache(sessionCache);
         sessionHandler.setHttpOnly(true);
-        sessionHandler.setSameSite(HttpCookie.SameSite.STRICT);
+        sessionHandler.setSameSite(HttpCookie.SameSite.LAX); // todo https://stackoverflow.com/questions/42216700/how-can-i-redirect-after-oauth2-with-samesite-strict-and-still-get-my-cookies
         sessionHandler.setSecureRequestOnly(true);
         return sessionHandler;
     }

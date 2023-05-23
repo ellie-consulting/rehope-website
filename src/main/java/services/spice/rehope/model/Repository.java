@@ -23,6 +23,7 @@ public abstract class Repository<T> {
     public Repository(@NotNull PostgreDatasource datasource) {
         this.datasource = datasource;
 
+        System.out.println("hi " + getClass().getSimpleName());
         createTableIfNotExists();
     }
 
@@ -91,10 +92,8 @@ public abstract class Repository<T> {
     @NotNull
     protected Optional<T> getByField(@NotNull String queryField, Object query) {
         try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM ? WHERE ? = ?");
-            statement.setString(1, getTable());
-            statement.setString(2, queryField);
-            statement.setObject(2, query);
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + getTable() + " WHERE " + queryField + " = ?");
+            statement.setObject(1, query);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -128,11 +127,8 @@ public abstract class Repository<T> {
      */
     protected boolean existsByField(@NotNull String field, @NotNull String query) {
         try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT ? FROM ? WHERE ? = ?");
-            statement.setString(1, field);
-            statement.setString(2, getTable());
-            statement.setString(3, field);
-            statement.setString(4, query);
+            PreparedStatement statement = connection.prepareStatement("SELECT " + field + " FROM " + getTable() + " WHERE " + field + " = ?");
+            statement.setString(1, query);
 
             return statement.executeQuery().next();
         } catch (SQLException e) {
@@ -154,12 +150,9 @@ public abstract class Repository<T> {
      */
     protected boolean updateField(@NotNull String queryField, @NotNull Object query, @NotNull String updateField, @Nullable Object newValue) {
         try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("UPDATE ? SET ? = ? WHERE ? = ?");
-            statement.setString(1, getTable());
-            statement.setString(2, updateField);
-            statement.setObject(3, newValue);
-            statement.setString(4, queryField);
-            statement.setObject(5, query);
+            PreparedStatement statement = connection.prepareStatement("UPDATE " + getTable() + " SET " + updateField + " = ? WHERE " + queryField + " = ?");
+            statement.setObject(1, newValue);
+            statement.setObject(2, query);
 
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -176,7 +169,7 @@ public abstract class Repository<T> {
      * @param id Id to update.
      * @param updateField The field to update.
      * @param newValue The new value to replace with.
-     * @return If the update was succesfully.
+     * @return If the update was successfully.
      * @see Repository#updateField(String, Object, String, Object)
      */
     protected boolean updateFieldById(int id, @NotNull String updateField, @Nullable Object newValue) {
@@ -192,10 +185,8 @@ public abstract class Repository<T> {
      */
     protected boolean deleteData(@NotNull String queryField, Object query) {
         try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM ? WHERE ? = ?");
-            statement.setString(1, getTable());
-            statement.setString(2, queryField);
-            statement.setObject(3, query);
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + getTable() + " WHERE " + queryField + " = ?");
+            statement.setObject(1, query);
             int deleted = statement.executeUpdate();
 
             return deleted > 0;

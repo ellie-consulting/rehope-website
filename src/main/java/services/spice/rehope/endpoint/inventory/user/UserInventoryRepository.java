@@ -1,5 +1,6 @@
 package services.spice.rehope.endpoint.inventory.user;
 
+import io.avaje.inject.RequiresBean;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,7 @@ import java.util.List;
  * Stores user's inventory.
  */
 @Singleton
+@RequiresBean({PrincipleUserRepository.class, ElementRepository.class})
 public class UserInventoryRepository extends Repository<UserInventoryElement> {
     private static final String TABLE = "user_inventory";
     private static final Logger LOGGER = LoggerFactory.getLogger(UserInventoryRepository.class);
@@ -185,7 +187,7 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
         int id = resultSet.getInt("id");
         int userId = resultSet.getInt("user_id");
         int elementId = resultSet.getInt("element_id");
-        Time unlockTime = resultSet.getTime("unlock_time");
+        Timestamp unlockTime = resultSet.getTimestamp("unlock_time");
         String unlockCode = resultSet.getString("unlock_code");
         int relatedUserId = resultSet.getInt("unlock_user_context");
         float value = resultSet.getFloat("unlock_value");
@@ -195,20 +197,18 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
 
     @Override
     protected void createTableIfNotExists() {
-        try {
-            try (Connection connection = datasource.getConnection()) {
-                connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-                        "id SERIAL PRIMARY KEY," +
-                        "user_id INTEGER NOT NULL REFERENCES " + PrincipleUserRepository.TABLE + "(id) ON DELETE CASCADE," +
-                        "element_id INTEGER NOT NULL REFERENCES " + ElementRepository.TABLE + "(id) ON DELETE CASCADE," +
-                        "unlock_time TIMESTAMP NOT NULL DEFAULT NOW()," +
-                        "unlock_code VARCHAR(100)," +
-                        "unlock_user_context INT REFERENCES " + PrincipleUserRepository.TABLE + "(id)," +
-                        "unlock_value FLOAT" +
-                        ")").execute();
-            }
+        try (Connection connection = datasource.getConnection()) {
+            connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
+                    "id SERIAL PRIMARY KEY," +
+                    "user_id INTEGER NOT NULL REFERENCES " + PrincipleUserRepository.TABLE + "(id) ON DELETE CASCADE," +
+                    "element_id INTEGER NOT NULL REFERENCES " + ElementRepository.TABLE + "(id) ON DELETE CASCADE," +
+                    "unlock_time TIMESTAMP NOT NULL DEFAULT NOW()," +
+                    "unlock_code VARCHAR(100)," +
+                    "unlock_user_context INT REFERENCES " + PrincipleUserRepository.TABLE + "(id)," +
+                    "unlock_value FLOAT" +
+                    ")").execute();
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to create element definition table", e);
+            throw new RuntimeException("Failed to create user inventory table", e);
         }
     }
 }
