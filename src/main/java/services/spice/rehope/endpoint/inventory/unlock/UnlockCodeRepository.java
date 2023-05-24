@@ -1,12 +1,13 @@
 package services.spice.rehope.endpoint.inventory.unlock;
 
+import io.javalin.http.BadRequestResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.datasource.exception.DatabaseError;
 import services.spice.rehope.endpoint.inventory.element.ElementRepository;
 import services.spice.rehope.model.Repository;
 
@@ -40,7 +41,7 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
      *
      * @param code Code to insert.
      */
-    public boolean insertCode(@NotNull UnlockCode code) {
+    public void insertCode(@NotNull UnlockCode code) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO " + TABLE + " (code, redeem_limit, uses, active, unlock_element_id) " +
@@ -51,23 +52,23 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
             statement.setBoolean(4, code.active());
             statement.setInt(5, code.unlockElementId());
 
-            return statement.executeUpdate() > 0;
+            if (statement.executeUpdate() == 0) {
+                throw new BadRequestResponse();
+            }
         } catch (SQLException e) {
             getLogger().error("failed to insert code code {}", code);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
      * Code to delete.
      *
      * @param code Code to delete.
-     * @return If anything was deleted.
      */
-    public boolean deleteCode(@NotNull String code) {
-        return deleteData("code", code);
+    public void deleteCode(@NotNull String code) {
+        deleteData("code", code);
     }
 
     /**
@@ -75,10 +76,9 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
      *
      * @param code Code to update.
      * @param state The new state to set.
-     * @return If the update was successful.
      */
-    public boolean setCodeActive(@NotNull String code, boolean state) {
-        return updateField("code", code, "active", state);
+    public void setCodeActive(@NotNull String code, boolean state) {
+        updateField("code", code, "active", state);
     }
 
     /**
@@ -93,7 +93,7 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
      * @param code Code to redeem.
      * @return A code successfully redeemed.
      */
-    @Nullable
+    @NotNull
     public UnlockCode tryRedeem(@NotNull String code) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement selectStatement = connection.prepareStatement(
@@ -104,7 +104,7 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
             ResultSet resultSet = selectStatement.executeQuery();
             if (!resultSet.next()) {
                 // Code not found
-                return null;
+                throw new BadRequestResponse("code invalid");
             }
 
             int redeemLimit = resultSet.getInt("redeem_limit");
@@ -112,7 +112,7 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
 
             if (redeemLimit != -1 && uses >= redeemLimit) {
                 // Code usage limit reached
-                return null;
+                throw new BadRequestResponse("code used");
             }
 
             PreparedStatement updateStatement = connection.prepareStatement(
@@ -124,9 +124,8 @@ public class UnlockCodeRepository extends Repository<UnlockCode> {
         } catch (SQLException e) {
             getLogger().error("failed to redeem code {}", code);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return null;
     }
 
     @Override

@@ -34,20 +34,20 @@ public class UserInventoryService {
         return inventoryRepository.getUserInventory(userId, streamerId);
     }
 
-    public boolean addToInventory(int userId, int elementId) {
-        return inventoryRepository.addElementToInventory(userId, elementId, null, null, null);
+    public void addToInventory(int userId, int elementId) {
+        inventoryRepository.addElementToInventory(userId, elementId, null, null, null);
     }
 
-    public boolean addToInventoryFromCode(int userId, int elementId, String unlockCode) {
-        return inventoryRepository.addElementToInventory(userId, elementId, unlockCode, null, null);
+    public void addToInventoryFromCode(int userId, int elementId, String unlockCode) {
+        inventoryRepository.addElementToInventory(userId, elementId, unlockCode, null, null);
     }
 
-    public boolean addToInventoryFromEvent(int userId, int elementId, int userContext, float unlockValue) {
-        return inventoryRepository.addElementToInventory(userId, elementId, null, userContext, unlockValue);
+    public void addToInventoryFromEvent(int userId, int elementId, int userContext, float unlockValue) {
+        inventoryRepository.addElementToInventory(userId, elementId, null, userContext, unlockValue);
     }
 
-    public boolean deleteItemFromInventory(int userId, int elementId, @Nullable Integer context) {
-        return inventoryRepository.removeElementFromInventory(userId, elementId, context);
+    public void deleteItemFromInventory(int userId, int elementId, @Nullable Integer context) {
+        inventoryRepository.removeElementFromInventory(userId, elementId, context);
     }
 
     public boolean hasUnlockedElementWithCode(int userId, @NotNull String unlockCode) {

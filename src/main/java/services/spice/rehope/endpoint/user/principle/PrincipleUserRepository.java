@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.datasource.exception.DatabaseError;
 import services.spice.rehope.endpoint.user.auth.AuthProviderSource;
 import services.spice.rehope.model.Repository;
 
@@ -52,7 +53,7 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
         return getByField("provider_id", providerId);
     }
 
-    public boolean createUser(@NotNull PrincipleUser user) {
+    public void createUser(@NotNull PrincipleUser user) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement =
                     connection.prepareStatement("INSERT INTO " + TABLE + " (username, email, role, " +
@@ -72,24 +73,23 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.next()) {
                 user.setId(resultSet.getInt("id"));
-
-                return true;
+                return;
             }
 
+            throw new DatabaseError();
         } catch (SQLException e) {
             LOGGER.error("failed to create a user");
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
-    public boolean setUsername(int id, String newUsername) {
-        return updateFieldById(id, "username", newUsername);
+    public void setUsername(int id, String newUsername) {
+        updateFieldById(id, "username", newUsername);
     }
 
-    public boolean updateLastLogin(int id) {
-        return updateFieldById(id, "last_login", Timestamp.valueOf(LocalDateTime.now()));
+    public void updateLastLogin(int id) {
+        updateFieldById(id, "last_login", Timestamp.valueOf(LocalDateTime.now()));
     }
 
     @Override

@@ -25,22 +25,18 @@ public class InventoryElementController extends ApiController {
     }
 
     @Post
-    public boolean add(InventoryElement element) {
-        return elementService.addItem(element);
+    public void add(InventoryElement element) {
+        elementService.addItem(element);
     }
 
     @Delete
-    public boolean remove(int elementId) {
-        return elementService.deleteItem(elementId);
+    public void remove(int elementId) {
+        elementService.deleteItem(elementId);
     }
 
     @Patch
-    public InventoryElement update(InventoryElement element) {
-        if (elementService.updateElement(element)) {
-            return element;
-        }
-
-        return null;
+    public void update(InventoryElement element) {
+        elementService.updateElement(element);
     }
 
 }

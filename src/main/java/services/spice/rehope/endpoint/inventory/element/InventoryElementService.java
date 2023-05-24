@@ -30,20 +30,18 @@ public class InventoryElementService {
      * Register an item definition.
      *
      * @param element Element to register.
-     * @return If it was added (no dupes)
      */
-    public boolean addItem(@NotNull InventoryElement element) {
-        return elementRepository.addItem(element);
+    public void addItem(@NotNull InventoryElement element) {
+        elementRepository.addItem(element);
     }
 
     /**
      * Delete an item definition by its id.
      *
      * @param id Id to delete.
-     * @return If deleted successfully.
      */
-    public boolean deleteItem(int id) {
-        return elementRepository.deleteElementById(id);
+    public void deleteItem(int id) {
+        elementRepository.deleteElementById(id);
     }
 
     /**
@@ -51,8 +49,8 @@ public class InventoryElementService {
      *
      * @param element Element to update.
      */
-    public boolean updateElement(@NotNull InventoryElement element) {
-        return elementRepository.updateElement(element);
+    public void updateElement(@NotNull InventoryElement element) {
+        elementRepository.updateElement(element);
     }
 
     /**

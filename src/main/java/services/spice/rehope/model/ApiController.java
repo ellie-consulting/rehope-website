@@ -2,34 +2,42 @@ package services.spice.rehope.model;
 
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import io.javalin.http.UnauthorizedResponse;
 import org.jetbrains.annotations.Nullable;
 import services.spice.rehope.endpoint.user.principle.UserRole;
 import services.spice.rehope.util.ContextUtils;
 
+import java.util.Optional;
+
 public abstract class ApiController {
 
-    protected final Integer userId(Context context) {
-        return ContextUtils.userId(context).orElse(null);
+    protected final Optional<Integer> optionalUserId(Context context) {
+        return ContextUtils.userId(context);
+    }
+
+    protected final int userId(Context context) {
+        return optionalUserId(context).orElseThrow(() -> new UnauthorizedResponse("Invalid session"));
+    }
+
+    protected final Optional<UserRole> optionalUserRole(Context context) {
+        return ContextUtils.role(context);
     }
 
     protected final UserRole userRole(Context context) {
-        return ContextUtils.role(context).orElse(null);
+        return optionalUserRole(context).orElseThrow(() -> new UnauthorizedResponse("Invalid session"));
     }
 
-    protected final boolean assertSelfOrStaff(Context context, int queryId) {
-        Integer userId = userId(context);
+    protected final void assertSelfOrStaff(Context context, int queryId) {
+        int userId = userId(context);
         UserRole userRole = userRole(context);
 
-        return userId != null && userRole != null && (userId == queryId || userRole.isStaff());
+        if (userId != queryId && !userRole.isStaff()) {
+            throw new UnauthorizedResponse("You can only perform this action on your own account.");
+        }
     }
 
-    protected final boolean unauthorized(Context context, @Nullable String error) {
-        context.status(HttpStatus.UNAUTHORIZED);
-        if (error != null) {
-            context.result(error);
-        }
-
-        return false;
+    protected final void unauthorized(@Nullable String error) {
+        throw new UnauthorizedResponse(error != null ? error : "");
     }
 
 }

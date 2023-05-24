@@ -1,9 +1,11 @@
 package services.spice.rehope.model;
 
+import io.javalin.http.NotFoundResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.datasource.exception.DatabaseError;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -146,21 +148,21 @@ public abstract class Repository<T> {
      * @param query Comparison.
      * @param updateField Field to update.
      * @param newValue New value to use.
-     * @return If was updated successfully.
      */
-    protected boolean updateField(@NotNull String queryField, @NotNull Object query, @NotNull String updateField, @Nullable Object newValue) {
+    protected void updateField(@NotNull String queryField, @NotNull Object query, @NotNull String updateField, @Nullable Object newValue) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("UPDATE " + getTable() + " SET " + updateField + " = ? WHERE " + queryField + " = ?");
             statement.setObject(1, newValue);
             statement.setObject(2, query);
 
-            return statement.executeUpdate() > 0;
+            if (statement.executeUpdate() == 0) {
+                throw new DatabaseError();
+            }
         } catch (SQLException e) {
             getLogger().error("failed to update field for {}={}: {} -> {}", queryField, query, updateField, newValue);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
@@ -169,11 +171,10 @@ public abstract class Repository<T> {
      * @param id Id to update.
      * @param updateField The field to update.
      * @param newValue The new value to replace with.
-     * @return If the update was successfully.
      * @see Repository#updateField(String, Object, String, Object)
      */
-    protected boolean updateFieldById(int id, @NotNull String updateField, @Nullable Object newValue) {
-        return updateField("id", id, updateField, newValue);
+    protected void updateFieldById(int id, @NotNull String updateField, @Nullable Object newValue) {
+        updateField("id", id, updateField, newValue);
     }
 
     /**
@@ -181,33 +182,32 @@ public abstract class Repository<T> {
      *
      * @param queryField Lookup field.
      * @param query Comparison.
-     * @return If deleted successfully.
      */
-    protected boolean deleteData(@NotNull String queryField, Object query) {
+    protected void deleteData(@NotNull String queryField, Object query) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM " + getTable() + " WHERE " + queryField + " = ?");
             statement.setObject(1, query);
             int deleted = statement.executeUpdate();
 
-            return deleted > 0;
+            if (deleted == 0) {
+                throw new NotFoundResponse();
+            }
+
         } catch (SQLException e) {
             getLogger().error("failed to delete table element where {}={}", queryField, query);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
      * Delete an element by its id.
      *
      * @param id Id to delete by.
-     * @return If deleted successfully.
      */
-    protected boolean deleteDataById(int id) {
-        return deleteData("id", id);
+    protected void deleteDataById(int id) {
+        deleteData("id", id);
     }
-
 
     protected abstract T mapResultSetToType(@NotNull ResultSet resultSet) throws SQLException;
 

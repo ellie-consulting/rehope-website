@@ -1,11 +1,14 @@
 package services.spice.rehope.endpoint.inventory.element;
 
+import io.javalin.http.BadRequestResponse;
+import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.datasource.exception.DatabaseError;
 import services.spice.rehope.endpoint.inventory.element.model.InventoryElement;
 import services.spice.rehope.endpoint.inventory.element.model.UnlockObjective;
 import services.spice.rehope.endpoint.inventory.element.model.ElementType;
@@ -44,11 +47,10 @@ public class ElementRepository extends Repository<InventoryElement> {
      * Register an item definition.
      *
      * @param element Element to register.
-     * @return If it was added (no dupes)
      */
-    public boolean addItem(@NotNull InventoryElement element) {
+    public void addItem(@NotNull InventoryElement element) {
         if (existsByField("element_id", element.name())) {
-            return false;
+            throw new BadRequestResponse(element.name() + " already exists");
         }
 
         try (Connection connection = datasource.getConnection()) {
@@ -63,15 +65,15 @@ public class ElementRepository extends Repository<InventoryElement> {
             statement.setString(5, element.name());
             statement.setString(6, element.description());
             statement.setString(7, element.iconUri());
-            statement.execute();
 
-            return true;
+            if (statement.executeUpdate() == 0) {
+                throw new DatabaseError();
+            }
+
         } catch (SQLException e) {
             getLogger().error("failed to insert inventory element {}", element);
-            e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
@@ -79,7 +81,7 @@ public class ElementRepository extends Repository<InventoryElement> {
      *
      * @param element Element to update.
      */
-    public boolean updateElement(@NotNull InventoryElement element) {
+    public void updateElement(@NotNull InventoryElement element) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement =
                     connection.prepareStatement("UPDATE " + TABLE +" SET type = ?, unlock_objective = ?, unlock_value = ?, " +
@@ -92,13 +94,15 @@ public class ElementRepository extends Repository<InventoryElement> {
             statement.setString(5, element.description());
             statement.setString(6, element.iconUri());
             statement.setString(7, element.elementId());
-            return statement.executeUpdate() > 0;
+
+            if (statement.executeUpdate() == 0) {
+                throw new NotFoundResponse(element.name() + " does not exist");
+            }
         } catch (SQLException e) {
             getLogger().error("failed to insert inventory element {}", element);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
@@ -127,6 +131,7 @@ public class ElementRepository extends Repository<InventoryElement> {
         } catch (SQLException e) {
             getLogger().error("failed to get inventory elements for {} {}", unlockObjective, unlockValue);
             e.printStackTrace();
+            throw new DatabaseError();
         }
 
         return inventoryElements;
@@ -137,8 +142,8 @@ public class ElementRepository extends Repository<InventoryElement> {
      *
      * @param id Id to delete by.
      */
-    public boolean deleteElementById(int id) {
-        return deleteDataById(id);
+    public void deleteElementById(int id) {
+        deleteDataById(id);
     }
 
     @Override

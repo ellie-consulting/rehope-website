@@ -4,6 +4,7 @@ import io.avaje.http.api.Controller;
 import io.avaje.http.api.Delete;
 import io.avaje.http.api.Get;
 import io.avaje.http.api.Post;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import jakarta.inject.Inject;
@@ -31,30 +32,26 @@ public class UnlockController extends ApiController {
 
     @Post
     @EndpointRoles(UserRole.ADMIN)
-    public boolean addCode(UnlockCode code) {
-        return service.createCode(code);
+    public void addCode(UnlockCode code) {
+        service.createCode(code);
     }
 
     @Delete
     @EndpointRoles(UserRole.ADMIN)
-    public boolean deleteCode(String code) {
-        return service.deleteCode(code);
+    public void deleteCode(String code) {
+        service.deleteCode(code);
     }
 
     @Post("/redeem")
-    @EndpointRoles(UserRole.ADMIN)
-    public boolean redeemCode(Context context, String code) {
+    @EndpointRoles(UserRole.USER)
+    public void redeemCode(Context context, String code) {
         if (code == null || code.isBlank()) {
-            context.status(HttpStatus.BAD_REQUEST).json("No code specified");
-            return false;
+            throw new BadRequestResponse("No code specified");
         }
 
-        Integer selfUserId = userId(context);
-        if (selfUserId == null) {
-            return false;
-        }
+        int selfUserId = userId(context);
 
-        return service.redeemCode(code, selfUserId);
+        service.redeemCode(code, selfUserId);
     }
 
 }

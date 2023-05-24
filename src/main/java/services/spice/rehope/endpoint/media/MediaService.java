@@ -48,20 +48,18 @@ public class MediaService {
      * The url must be unique to the table.
      *
      * @param media Media to add.
-     * @return If it was successfully added.
      */
-    public boolean addFeaturedMedia(@NotNull Media media) {
-        return featuredRepository.addMedia(media);
+    public void addFeaturedMedia(@NotNull Media media) {
+        featuredRepository.addMedia(media);
     }
 
     /**
      * Remove a featured media by its url.
      *
      * @param url Url to remove.
-     * @return If it was removed.
      */
-    public boolean removeFeaturedMedia(@NotNull String url) {
-        return featuredRepository.removeMedia(url);
+    public void removeFeaturedMedia(@NotNull String url) {
+        featuredRepository.removeMedia(url);
     }
 
     /**
@@ -136,29 +134,19 @@ public class MediaService {
      *
      * @param userId User id.
      * @param channelId Channel id.
-     * @return If added successfully.
      */
-    public boolean addChannelId(int userId, @NotNull String channelId) {
-        if (channelRepository.addChannelId(userId, channelId)) {
-            mediaCache.setUserTracking(userId, channelId);
-            return true;
-        }
-
-        return false;
+    public void addChannelId(int userId, @NotNull String channelId) {
+        channelRepository.addChannelId(userId, channelId);
+        mediaCache.setUserTracking(userId, channelId);
     }
 
     /**
      * Remove a YouTube connection to a user id.
      *
      * @param userId User id to remove connection of.
-     * @return If successfully removed.
      */
-    public boolean removeChannelId(int userId) {
-        if (channelRepository.removeChannelId(userId)) {
-            mediaCache.removeUserTracking(userId);
-            return true;
-        }
-
-        return false;
+    public void removeChannelId(int userId) {
+        channelRepository.removeChannelId(userId);
+        mediaCache.removeUserTracking(userId);
     }
 }

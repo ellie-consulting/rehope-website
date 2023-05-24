@@ -1,6 +1,7 @@
 package services.spice.rehope.endpoint.user.preferences;
 
 import io.avaje.inject.RequiresBean;
+import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -93,14 +94,13 @@ public class PreferencesRepository extends Repository<UserPreferences> {
      * @param userId User to set for.
      * @param settingId Setting id.
      * @param state Preference state.
-     * @return If set correctly.
      */
-    public boolean updatePreference(int userId, @NotNull String settingId, boolean state) {
+    public void updatePreference(int userId, @NotNull String settingId, boolean state) {
         if (!PREFERENCE_KEYS.contains(settingId.toLowerCase())) {
-            return false;
+            throw new NotFoundResponse(settingId + " is not a valid preference key.");
         }
 
-        return updateField("user_id", userId, settingId.toLowerCase(), state);
+        updateField("user_id", userId, settingId.toLowerCase(), state);
     }
 
     @Override

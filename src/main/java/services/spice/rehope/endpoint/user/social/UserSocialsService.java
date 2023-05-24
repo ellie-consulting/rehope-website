@@ -47,10 +47,9 @@ public class UserSocialsService {
      * Insert a new social media for a user.
      *
      * @param socialMedia Social media to insert.
-     * @return If it was successfully added.
      */
-    public boolean addUserSocial(@NotNull UserSocial socialMedia) {
-        return repository.addUserSocial(socialMedia);
+    public void addUserSocial(@NotNull UserSocial socialMedia) {
+        repository.addUserSocial(socialMedia);
     }
 
     /**
@@ -58,10 +57,9 @@ public class UserSocialsService {
      *
      * @param userId User to delete.
      * @param type Type to delete.
-     * @return If any change.
      */
-    public boolean deleteUserSocial(int userId, @NotNull UserSocialPlatform type) {
-        return repository.deleteUserSocial(userId, type);
+    public void deleteUserSocial(int userId, @NotNull UserSocialPlatform type) {
+        repository.deleteUserSocial(userId, type);
     }
 
 }

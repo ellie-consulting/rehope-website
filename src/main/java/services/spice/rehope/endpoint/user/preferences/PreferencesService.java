@@ -44,10 +44,9 @@ public class PreferencesService {
      * @param userId User to set for.
      * @param settingId Setting id.
      * @param state Preference state.
-     * @return If set correctly.
      */
-    public boolean updatePreference(int userId, @NotNull String settingId, boolean state) {
-        return repository.updatePreference(userId, settingId, state);
+    public void updatePreference(int userId, @NotNull String settingId, boolean state) {
+        repository.updatePreference(userId, settingId, state);
     }
 
 }

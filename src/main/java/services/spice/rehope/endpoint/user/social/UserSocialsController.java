@@ -1,8 +1,10 @@
 package services.spice.rehope.endpoint.user.social;
 
 import io.avaje.http.api.*;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import services.spice.rehope.model.ApiController;
 
@@ -19,14 +21,9 @@ public class UserSocialsController extends ApiController {
     @Get
     public void get(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
         if (platform != null) {
-            UserSocial userSocial = service.getUserSocial(userId, platform).orElse(null);
+            UserSocial userSocial = service.getUserSocial(userId, platform).orElseThrow(NotFoundResponse::new);
 
-            if (userSocial != null) {
-                context.json(userSocial, UserSocial.class);
-            } else {
-                context.result("null");
-            }
-
+            context.json(userSocial, UserSocial.class);
             return;
         }
 
@@ -36,30 +33,23 @@ public class UserSocialsController extends ApiController {
     }
 
     @Post
-    public UserSocial connect(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
-        if (!assertSelfOrStaff(context, userId)) {
-            unauthorized(context, "You can only perform this action on your own account.");
-            return null;
-        }
+    public void connect(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
+        assertSelfOrStaff(context, userId);
 
-        // todo need to connect
+        // todo need to connect via oauth
 
-        return service.getUserSocial(userId, platform).orElse(null);
+//        return service.getUserSocial(userId, platform).orElseThrow(() -> );
     }
 
     @Delete
-    public boolean unlink(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
+    public void unlink(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
         if (platform == null) {
-            context.status(HttpStatus.BAD_REQUEST);
-            context.result("no platform");
-            return false;
+            throw new BadRequestResponse("No platform specified");
         }
 
-        if (!assertSelfOrStaff(context, userId)) {
-            return unauthorized(context, "You can only perform this action on your own account.");
-        }
+        assertSelfOrStaff(context, userId);
 
-        return service.deleteUserSocial(userId, platform);
+        service.deleteUserSocial(userId, platform);
     }
 
 }

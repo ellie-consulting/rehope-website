@@ -1,12 +1,14 @@
 package services.spice.rehope.endpoint.user.social;
 
 import io.avaje.inject.RequiresBean;
+import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.datasource.exception.DatabaseError;
 import services.spice.rehope.model.Repository;
 import services.spice.rehope.endpoint.user.principle.PrincipleUserRepository;
 
@@ -69,6 +71,7 @@ public class UserSocialsRepository extends Repository<UserSocial> {
         } catch (SQLException e) {
             LOGGER.error("failed to get user {} socials", userId);
             e.printStackTrace();
+            throw new DatabaseError();
         }
 
         return res;
@@ -96,7 +99,9 @@ public class UserSocialsRepository extends Repository<UserSocial> {
         } catch (SQLException e) {
             LOGGER.error("failed to get user {} social by type {}", userId, type);
             e.printStackTrace();
+            throw new DatabaseError();
         }
+
         return Optional.empty();
     }
 
@@ -104,9 +109,8 @@ public class UserSocialsRepository extends Repository<UserSocial> {
      * Insert a new social media for a user.
      *
      * @param socialMedia Social media to insert.
-     * @return If it was successfully added.
      */
-    public boolean addUserSocial(@NotNull UserSocial socialMedia) {
+    public void addUserSocial(@NotNull UserSocial socialMedia) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO " + TABLE + " (user_id, social_media, social_media_id) VALUES (?, ?, ?)");
@@ -114,13 +118,14 @@ public class UserSocialsRepository extends Repository<UserSocial> {
             statement.setString(2, socialMedia.platform().name());
             statement.setString(3, socialMedia.socialMediaId());
 
-            return statement.executeUpdate() > 0;
+            if (statement.executeUpdate() == 0) {
+                throw new DatabaseError();
+            }
         } catch (SQLException e) {
             getLogger().error("failed to insert user social media {}", socialMedia);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
@@ -128,9 +133,8 @@ public class UserSocialsRepository extends Repository<UserSocial> {
      *
      * @param userId User to delete.
      * @param type Type to delete.
-     * @return If any change.
      */
-    public boolean deleteUserSocial(int userId, @NotNull UserSocialPlatform type) {
+    public void deleteUserSocial(int userId, @NotNull UserSocialPlatform type) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM ? WHERE user_id = ? AND social_media = ?");
             statement.setString(1, getTable());
@@ -138,13 +142,14 @@ public class UserSocialsRepository extends Repository<UserSocial> {
             statement.setString(3, type.name());
             int deleted = statement.executeUpdate();
 
-            return deleted > 0;
+            if (deleted == 0) {
+                throw new NotFoundResponse(type + " was not linked");
+            }
         } catch (SQLException e) {
             getLogger().error("failed to delete user {} social {}", userId, type);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     @Override

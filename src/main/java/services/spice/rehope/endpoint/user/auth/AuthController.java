@@ -2,6 +2,7 @@ package services.spice.rehope.endpoint.user.auth;
 
 import io.avaje.http.api.Controller;
 import io.avaje.http.api.Get;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import jakarta.inject.Inject;
 import services.spice.rehope.model.ApiController;
@@ -17,9 +18,8 @@ public class AuthController extends ApiController {
 
     @Get("/login/google")
     public void googleLogin(Context context) {
-        if (userId(context) != null) {
-            context.json("You are already logged in.");
-            return;
+        if (optionalUserId(context).isPresent()) {
+            throw new BadRequestResponse("Already logged in");
         }
 
         service.handleLogin(AuthProviderSource.GOOGLE, context);
@@ -27,9 +27,8 @@ public class AuthController extends ApiController {
 
     @Get("/login/twitter")
     public void twitterLogin(Context context) {
-        if (userId(context) != null) {
-            context.json("You are already logged in.");
-            return;
+        if (optionalUserId(context).isPresent()) {
+            throw new BadRequestResponse("Already logged in");
         }
 
         service.handleLogin(AuthProviderSource.TWITTER, context);

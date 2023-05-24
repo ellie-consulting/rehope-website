@@ -1,6 +1,7 @@
 package services.spice.rehope.endpoint.inventory.user;
 
 import io.avaje.inject.RequiresBean;
+import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.datasource.exception.DatabaseError;
 import services.spice.rehope.endpoint.inventory.element.ElementRepository;
 import services.spice.rehope.model.Repository;
 import services.spice.rehope.endpoint.user.principle.PrincipleUserRepository;
@@ -84,9 +86,8 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
      * @param userId User id to add it to.
      * @param elementId Element id to add.
      * @param unlockCode Unlock code used, may be null.
-     * @return If it was added successfully.
      */
-    public boolean addElementToInventory(int userId, int elementId,
+    public void addElementToInventory(int userId, int elementId,
                                       @Nullable String unlockCode, @Nullable Integer unlockUserContext, @Nullable Float unlockValue) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
@@ -98,13 +99,14 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
             statement.setObject(4, unlockUserContext, Types.INTEGER);
             statement.setObject(5, unlockValue, Types.FLOAT);
 
-            return statement.executeUpdate() > 0;
+            if (statement.executeUpdate() == 0) {
+                throw new DatabaseError();
+            }
         } catch (SQLException e) {
             LOGGER.error("failed to add {} to user's {} inventory from unlock code {}", elementId, unlockCode, unlockCode);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
@@ -131,6 +133,7 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
         } catch (SQLException e) {
             LOGGER.error("failed to execute batch {}", elements);
             e.printStackTrace();
+            throw new DatabaseError();
         }
     }
 
@@ -142,7 +145,7 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
      * @param contextUser Element unlock context.
      * @return If there was anything removed.
      */
-    public boolean removeElementFromInventory(int userId, int elementId, @Nullable Integer contextUser) {
+    public void removeElementFromInventory(int userId, int elementId, @Nullable Integer contextUser) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
                     "DELETE FROM " + TABLE + " WHERE user_id = ? AND element_id = ? AND unlock_user_context = ?");
@@ -150,13 +153,14 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
             statement.setInt(2, elementId);
             statement.setObject(3, contextUser, Types.INTEGER);
 
-            return statement.executeUpdate() > 0;
+            if (statement.executeUpdate() == 0) {
+                throw new NotFoundResponse(elementId + " was not in inventory");
+            }
         } catch (SQLException e) {
             LOGGER.error("failed to remove {} from user's {} inventory", elementId, userId);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
@@ -177,9 +181,8 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
         } catch (SQLException e) {
             LOGGER.error("failed to check if {} has used code {}", userId, unlockCode);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     @Override

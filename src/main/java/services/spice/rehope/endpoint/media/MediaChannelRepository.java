@@ -1,10 +1,12 @@
 package services.spice.rehope.endpoint.media;
 
+import io.javalin.http.BadRequestResponse;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.datasource.exception.DatabaseError;
 import services.spice.rehope.endpoint.media.model.MediaCreator;
 import services.spice.rehope.endpoint.user.principle.PrincipleUserRepository;
 import services.spice.rehope.model.Repository;
@@ -52,32 +54,31 @@ public class MediaChannelRepository extends Repository<MediaCreator> {
      *
      * @param userId User id.
      * @param channelId Channel id.
-     * @return If added successfully.
      */
-    public boolean addChannelId(int userId, @NotNull String channelId) {
+    public void addChannelId(int userId, @NotNull String channelId) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + TABLE + " (user_id, channel_id) " +
                     "VALUES (?, ?)");
             statement.setInt(1, userId);
             statement.setString(2, channelId);
 
-            return statement.executeUpdate() > 0;
+            if (statement.executeUpdate() == 0) {
+                throw new BadRequestResponse("user id already assigned to a channel");
+            }
         } catch (SQLException e) {
             getLogger().error("failed to add channel connection for {} -> {}", userId, channelId);
             e.printStackTrace();
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
      * Remove a YouTube connection to a user id.
      *
      * @param userId User id to remove connection of.
-     * @return If successfully removed.
      */
-    public boolean removeChannelId(int userId) {
-        return deleteData("user_id", userId);
+    public void removeChannelId(int userId) {
+        deleteData("user_id", userId);
     }
 
     @Override

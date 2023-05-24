@@ -23,10 +23,7 @@ public class UserInventoryController extends ApiController {
     @Get
     @EndpointRoles(UserRole.USER)
     public List<UserInventoryElement> getInventory(Context context, int userId) {
-        if (!assertSelfOrStaff(context, userId)) {
-            context.status(HttpStatus.FORBIDDEN);
-            return List.of();
-        }
+        assertSelfOrStaff(context, userId);
 
         return inventoryService.getInventory(userId);
     }
@@ -34,18 +31,15 @@ public class UserInventoryController extends ApiController {
     @Get("/context/:streamerId")
     @EndpointRoles(UserRole.USER)
     public List<UserInventoryElement> getInventory(Context context, int userId, int streamerId) {
-        if (!assertSelfOrStaff(context, userId)) {
-            context.status(HttpStatus.FORBIDDEN);
-            return List.of();
-        }
+        assertSelfOrStaff(context, userId);
 
         return inventoryService.getInventoryInContext(userId, streamerId);
     }
 
     @Post
     @EndpointRoles(UserRole.ADMIN)
-    public boolean addItem(int userId, int elementId) {
-        return inventoryService.addToInventory(userId, elementId);
+    public void addItem(int userId, int elementId) {
+        inventoryService.addToInventory(userId, elementId);
     }
 
     @Delete

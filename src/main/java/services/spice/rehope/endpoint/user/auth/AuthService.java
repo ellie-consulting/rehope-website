@@ -65,12 +65,12 @@ public class AuthService {
         } else {
             LOGGER.info("Creating new profile");
 
-            user = createUserFromProfile(profile, AuthProviderSource.GOOGLE);
+            user = createUserFromProfile(profile, source);
             userService.createUser(user);
         }
 
         if (user.getUsername() == null) {
-            // todo redirect to select username
+            // todo redirect to select username (/api/user/setupUsername)
         }
 
         ContextUtils.setupSessionAttributes(user, context);

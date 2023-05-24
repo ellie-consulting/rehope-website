@@ -25,6 +25,10 @@ public final class ContextUtils {
         return value(context, KEY_USERNAME);
     }
 
+    public static void updateUsername(Context context, String name) {
+        context.sessionAttribute(KEY_USERNAME, name);
+    }
+
     public static Optional<UserRole> role(Context context) {
         return value(context, KEY_ROLE);
     }

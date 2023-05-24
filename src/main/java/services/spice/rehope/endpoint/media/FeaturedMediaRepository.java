@@ -1,11 +1,13 @@
 package services.spice.rehope.endpoint.media;
 
 import io.avaje.inject.RequiresBean;
+import io.javalin.http.BadRequestResponse;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.spice.rehope.datasource.PostgreDatasource;
+import services.spice.rehope.datasource.exception.DatabaseError;
 import services.spice.rehope.endpoint.media.model.Media;
 import services.spice.rehope.endpoint.media.model.MediaType;
 import services.spice.rehope.endpoint.user.principle.PrincipleUserRepository;
@@ -48,9 +50,8 @@ public class FeaturedMediaRepository extends Repository<Media> {
      * The url must be unique to the table.
      *
      * @param media Media to add.
-     * @return If it was successfully added.
      */
-    public boolean addMedia(@NotNull Media media) {
+    public void addMedia(@NotNull Media media) {
         featuredContent.add(media);
 
         try (Connection connection = datasource.getConnection()) {
@@ -60,24 +61,24 @@ public class FeaturedMediaRepository extends Repository<Media> {
             statement.setString(2, media.channelId());
             statement.setString(3, media.url());
 
-            return statement.executeUpdate() > 0;
+            if (statement.executeUpdate() == 0) {
+                throw new BadRequestResponse("media already added");
+            }
         } catch (SQLException e) {
             getLogger().error("failed to add media " + media, e);
+            throw new DatabaseError();
         }
-
-        return false;
     }
 
     /**
      * Remove a featured media by its url.
      *
      * @param url Url to remove.
-     * @return If it was removed.
      */
-    public boolean removeMedia(@NotNull String url) {
+    public void removeMedia(@NotNull String url) {
         featuredContent.removeIf(media -> media.url().equalsIgnoreCase(url));
 
-        return deleteData("video_url", url);
+        deleteData("video_url", url);
     }
 
     @Override

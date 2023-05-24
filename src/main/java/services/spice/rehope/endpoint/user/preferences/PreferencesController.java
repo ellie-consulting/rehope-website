@@ -20,10 +20,7 @@ public class PreferencesController extends ApiController {
 
     @Get
     public void get(Context context, int userId, @QueryParam("id") String preferenceId) {
-        if (!assertSelfOrStaff(context, userId)) {
-            unauthorized(context, "You can only see your own preferences.");
-            return;
-        }
+        assertSelfOrStaff(context, userId);
 
         if (preferenceId != null) {
             boolean preferenceState = service.getPreferenceState(userId, preferenceId);
@@ -40,12 +37,10 @@ public class PreferencesController extends ApiController {
     }
 
     @Post
-    public boolean set(Context context, int userId, String preferenceId, boolean value) {
-        if (!assertSelfOrStaff(context, userId)) {
-            return unauthorized(context, "You can only set your own preferences.");
-        }
+    public void set(Context context, int userId, String preferenceId, boolean value) {
+        assertSelfOrStaff(context, userId);
 
-        return service.updatePreference(userId, preferenceId, value);
+        service.updatePreference(userId, preferenceId, value);
     }
 
 }

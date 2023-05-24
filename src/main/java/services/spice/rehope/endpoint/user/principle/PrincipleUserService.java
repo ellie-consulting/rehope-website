@@ -3,6 +3,7 @@ package services.spice.rehope.endpoint.user.principle;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
+import services.spice.rehope.endpoint.user.principle.exception.InvalidUsernameException;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import java.util.Optional;
  */
 @Singleton
 public class PrincipleUserService {
+    private static final int MAX_USERNAME_LENGTH = 16;
 
     private final PrincipleUserRepository principleUserRepository;
 
@@ -25,16 +27,33 @@ public class PrincipleUserService {
         return principleUserRepository.getAll();
     }
 
-    public boolean createUser(PrincipleUser user) {
-        return principleUserRepository.createUser(user);
+    public void createUser(PrincipleUser user) {
+        principleUserRepository.createUser(user);
     }
 
-    public boolean handleLogin(int userId) {
-        return principleUserRepository.updateLastLogin(userId);
+    public void handleLogin(int userId) {
+         principleUserRepository.updateLastLogin(userId);
     }
 
-    public boolean updateUsername(int userId, String newUsername) {
-        return principleUserRepository.setUsername(userId, newUsername);
+    /**
+     * Update the username of a user.
+     * </br>
+     * This may be called by admin, or
+     * as the user setting up their first username.
+     *
+     * @param userId User id.
+     * @param newUsername Their new username.
+     */
+    public void updateUsername(int userId, @NotNull String newUsername) {
+        newUsername = newUsername.trim();
+
+        // todo profanity check
+
+        if (newUsername.length() > MAX_USERNAME_LENGTH) {
+            throw new InvalidUsernameException(InvalidUsernameException.Reason.TOO_LONG);
+        }
+
+        principleUserRepository.setUsername(userId, newUsername.trim());
     }
 
     @NotNull

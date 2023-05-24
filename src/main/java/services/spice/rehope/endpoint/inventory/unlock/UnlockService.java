@@ -1,5 +1,6 @@
 package services.spice.rehope.endpoint.inventory.unlock;
 
+import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -26,16 +27,16 @@ public class UnlockService {
         return codeRepository.getAll();
     }
 
-    public boolean createCode(@NotNull UnlockCode code) {
-        return codeRepository.insertCode(code);
+    public void createCode(@NotNull UnlockCode code) {
+        codeRepository.insertCode(code);
     }
 
-    public boolean deleteCode(@NotNull String code) {
-        return codeRepository.deleteCode(code);
+    public void deleteCode(@NotNull String code) {
+        codeRepository.deleteCode(code);
     }
 
-    public boolean setCodeState(@NotNull String code, boolean newState) {
-        return codeRepository.setCodeActive(code, newState);
+    public void setCodeState(@NotNull String code, boolean newState) {
+        codeRepository.setCodeActive(code, newState);
     }
 
     /**
@@ -46,22 +47,17 @@ public class UnlockService {
      *
      * @param code Code to redeem.
      * @param userId User id.
-     * @return If the code was redeemed.
      */
-    public boolean redeemCode(@NotNull String code, int userId) {
+    public void redeemCode(@NotNull String code, int userId) {
         // first: check if this user has not used the code already.
         if (userInventoryService.hasUnlockedElementWithCode(userId, code)) {
-            return false;
+            throw new NotFoundResponse("code contents already unlocked");
         }
 
         // second: try to redeem the code
         UnlockCode usedCode = codeRepository.tryRedeem(code);
-        if (usedCode == null) {
-            return false;
-        }
 
         userInventoryService.addToInventoryFromCode(userId, usedCode.unlockElementId(), usedCode.code());
-        return true;
     }
 
 }
