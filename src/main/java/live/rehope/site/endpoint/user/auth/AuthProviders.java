@@ -1,6 +1,7 @@
 package live.rehope.site.endpoint.user.auth;
 
 import io.javalin.http.Context;
+import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.pac4j.core.config.Config;
@@ -20,8 +21,9 @@ public class AuthProviders {
     private final CallbackHandler callbackHandler;
     private final LogoutHandler logoutHandler;
 
-    public AuthProviders(Google2Client google2Client, TwitterClient twitterClient, DiscordClient discordClient) {
-        this.config = new Config(discordClient);
+    public AuthProviders(@Named("oauth") Google2Client google2Client, @Named("oauth") TwitterClient twitterClient,
+                         @Named("oauth") DiscordClient discordClient) {
+        this.config = new Config("http://127.0.0.1:8080/api/auth/oauth/callback", google2Client, twitterClient, discordClient);
         config.getClients().setCallbackUrlResolver(new NoParameterCallbackUrlResolver());
         this.callbackHandler = new CallbackHandler(config, "/", true);
         this.logoutHandler = new LogoutHandler(config, "/?");
@@ -39,8 +41,7 @@ public class AuthProviders {
      *
      * @param context Request context.
      */
-    public void handleCallback(@NotNull Context context) {
-        System.out.println(context.fullUrl());
+    public void handleLoginCallback(@NotNull Context context) {
         callbackHandler.handle(context);
     }
 

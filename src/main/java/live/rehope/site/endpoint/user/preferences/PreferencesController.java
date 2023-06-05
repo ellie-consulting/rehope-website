@@ -1,5 +1,6 @@
 package live.rehope.site.endpoint.user.preferences;
 
+import live.rehope.site.endpoint.user.preferences.model.UserPreferences;
 import live.rehope.site.model.ApiController;
 import io.avaje.http.api.*;
 import io.javalin.http.Context;
@@ -8,7 +9,7 @@ import jakarta.inject.Inject;
 
 import java.util.Optional;
 
-@Controller("/api/user/:userId/preferences")
+@Controller("/api/user/{userId}/preferences")
 public class PreferencesController extends ApiController {
 
     private final PreferencesService service;

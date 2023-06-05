@@ -4,6 +4,8 @@ import live.rehope.site.datasource.PostgreDatasource;
 import live.rehope.site.endpoint.user.auth.AuthProviderSource;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import live.rehope.site.endpoint.user.principle.model.PrincipleUser;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,11 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
     @NotNull
     public Optional<PrincipleUser> getUserByEmail(@NotNull String email) {
         return getByField("email", email);
+    }
+
+    @NotNull
+    public Optional<PrincipleUser> getUserByUsername(@NotNull String username) {
+        return getByField("username", username);
     }
 
     @NotNull

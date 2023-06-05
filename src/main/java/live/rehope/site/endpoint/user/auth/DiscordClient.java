@@ -5,28 +5,27 @@ import com.github.scribejava.core.model.Token;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
-import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.Pac4jConstants;
-import org.pac4j.oauth.client.Google2Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuthConfiguration;
 import org.pac4j.oauth.exception.OAuthCredentialsException;
 import org.pac4j.oauth.profile.OAuth20Profile;
-import org.pac4j.oauth.profile.creator.OAuth20ProfileCreator;
 import org.pac4j.oauth.profile.definition.OAuthProfileDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DiscordClient extends OAuth20Client {
-    private static final String SCOPE = "identify";
+    public static final String SOCIAL_SCOPE = "identify"; // todo email scope for reg
+    public static final String AUTH_SCOPE = "identify,email";
 
-    public DiscordClient(final String key, final String secret) {
+    private final String scope;
+
+    public DiscordClient(final String key, final String secret, final String scope) {
         setKey(key);
         setSecret(secret);
 
-
+        this.scope = scope;
     }
 
     @Override
@@ -59,7 +58,7 @@ public class DiscordClient extends OAuth20Client {
             }
         });
 
-        configuration.setScope(SCOPE);
+        configuration.setScope(scope);
         configuration.setWithState(true); // not required but recommended
         configuration.setHasBeenCancelledFactory(ctx -> {
             final var error = ctx.getRequestParameter(OAuthCredentialsException.ERROR).orElse(null);

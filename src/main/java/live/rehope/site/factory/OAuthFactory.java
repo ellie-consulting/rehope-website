@@ -2,6 +2,7 @@ package live.rehope.site.factory;
 
 import io.avaje.inject.Bean;
 import io.avaje.inject.Factory;
+import jakarta.inject.Named;
 import org.pac4j.oauth.client.Google2Client;
 import org.pac4j.oauth.client.TwitterClient;
 import live.rehope.site.endpoint.user.auth.DiscordClient;
@@ -14,35 +15,36 @@ import java.util.Properties;
 public class OAuthFactory extends LoadingFactory {
 
     @Bean
+    @Named("oauth")
     Google2Client google2Client() {
         try {
             Properties properties = loadCredentialPair("google.properties");
 
-            Google2Client googleClient = new Google2Client(getKey(properties), getSecret(properties));
-            googleClient.setCallbackUrl("http://127.0.0.1:8080/api/auth/oauth/google/callback");
-            return googleClient;
+            return new Google2Client(getKey(properties), getSecret(properties));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Bean
+    @Named("oauth")
     TwitterClient twitterClient() {
         try {
             Properties properties = loadCredentialPair("twitter.properties");
-
-            TwitterClient twitterClient = new TwitterClient(getKey(properties), getSecret(properties));
-            twitterClient.setCallbackUrl("http://127.0.0.1:8080/api/auth/oauth/twitter/callback");
-            return twitterClient;
+            return new TwitterClient(getKey(properties), getSecret(properties));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Bean
+    @Named("oauth")
     DiscordClient discordApi() {
-        DiscordClient discordClient = new DiscordClient("1105437794605748244", "CF1IrGtoRMjnfixmwgWTPNyukaw-7QMF");
-        discordClient.setCallbackUrl("http://127.0.0.1:8080/api/auth/oauth/discord/callback");
-        return discordClient;
+        try {
+            Properties properties = loadCredentialPair("discord.properties");
+            return new DiscordClient(getKey(properties), getSecret(properties), DiscordClient.AUTH_SCOPE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

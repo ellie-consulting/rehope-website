@@ -6,7 +6,7 @@ import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import live.rehope.site.endpoint.EndpointRoles;
-import live.rehope.site.endpoint.user.principle.UserRole;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import live.rehope.site.model.ApiController;
 
 import java.util.List;

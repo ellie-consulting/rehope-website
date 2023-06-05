@@ -1,6 +1,6 @@
 package live.rehope.site.endpoint;
 
-import live.rehope.site.endpoint.user.principle.UserRole;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

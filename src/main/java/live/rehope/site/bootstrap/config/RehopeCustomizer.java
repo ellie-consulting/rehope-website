@@ -2,19 +2,15 @@ package live.rehope.site.bootstrap.config;
 
 import com.google.gson.Gson;
 import io.javalin.json.JavalinGson;
-import live.rehope.site.endpoint.user.principle.UserRole;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import io.javalin.config.JavalinConfig;
 import io.javalin.config.PluginConfig;
 import io.javalin.http.HttpStatus;
-import io.javalin.json.JsonMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.jetbrains.annotations.NotNull;
 import live.rehope.site.util.ContextUtils;
 
-import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.util.Optional;
 
 @Singleton

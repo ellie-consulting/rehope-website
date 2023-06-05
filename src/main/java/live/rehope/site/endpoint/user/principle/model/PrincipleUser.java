@@ -1,4 +1,4 @@
-package live.rehope.site.endpoint.user.principle;
+package live.rehope.site.endpoint.user.principle.model;
 
 import live.rehope.site.endpoint.user.auth.AuthProviderSource;
 

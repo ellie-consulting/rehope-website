@@ -1,4 +1,4 @@
-package live.rehope.site.endpoint.user.social;
+package live.rehope.site.endpoint.user.social.model;
 
 /**
  * Represents a social media connection for a user.

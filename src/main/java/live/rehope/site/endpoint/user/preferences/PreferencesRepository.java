@@ -4,6 +4,7 @@ import io.avaje.inject.RequiresBean;
 import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import live.rehope.site.endpoint.user.preferences.model.UserPreferences;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

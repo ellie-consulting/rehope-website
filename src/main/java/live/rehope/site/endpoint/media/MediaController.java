@@ -2,7 +2,7 @@ package live.rehope.site.endpoint.media;
 
 import live.rehope.site.endpoint.EndpointRoles;
 import live.rehope.site.endpoint.media.model.VideoPublishEvent;
-import live.rehope.site.endpoint.user.principle.UserRole;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import io.avaje.http.api.Controller;
 import io.avaje.http.api.Get;
 import io.avaje.http.api.Post;

@@ -1,7 +1,7 @@
 package live.rehope.site.endpoint.inventory.user;
 
 import live.rehope.site.endpoint.EndpointRoles;
-import live.rehope.site.endpoint.user.principle.UserRole;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import live.rehope.site.model.ApiController;
 import io.avaje.http.api.*;
 import io.javalin.http.Context;

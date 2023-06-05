@@ -3,7 +3,7 @@ package live.rehope.site.model;
 import io.javalin.http.Context;
 import io.javalin.http.UnauthorizedResponse;
 import org.jetbrains.annotations.Nullable;
-import live.rehope.site.endpoint.user.principle.UserRole;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import live.rehope.site.util.ContextUtils;
 
 import java.util.Optional;

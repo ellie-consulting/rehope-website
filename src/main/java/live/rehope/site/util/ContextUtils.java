@@ -1,7 +1,7 @@
 package live.rehope.site.util;
 
-import live.rehope.site.endpoint.user.principle.PrincipleUser;
-import live.rehope.site.endpoint.user.principle.UserRole;
+import live.rehope.site.endpoint.user.principle.model.PrincipleUser;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import io.javalin.http.Context;
 
 import java.util.Optional;

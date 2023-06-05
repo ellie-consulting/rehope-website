@@ -1,4 +1,4 @@
-package live.rehope.site.endpoint.user.preferences;
+package live.rehope.site.endpoint.user.preferences.model;
 
 /**
  * User site settings and preferences.

@@ -11,8 +11,8 @@ import org.pac4j.jee.context.session.JEESessionStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import live.rehope.site.endpoint.user.principle.PrincipleUserService;
-import live.rehope.site.endpoint.user.principle.UserRole;
-import live.rehope.site.endpoint.user.principle.PrincipleUser;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
+import live.rehope.site.endpoint.user.principle.model.PrincipleUser;
 import live.rehope.site.util.ContextUtils;
 
 import java.sql.Timestamp;
@@ -93,9 +93,9 @@ public class AuthService {
      *
      * @param context Request context.
      */
-    public void handleCallback(@NotNull AuthProviderSource source, @NotNull Context context) {
-        LOGGER.info("handleCallback({})", source);
-        authProviders.handleCallback(context);
+    public void handleCallback(@NotNull Context context) {
+        LOGGER.info("handleCallback()");
+        authProviders.handleLoginCallback(context);
     }
 
     /**

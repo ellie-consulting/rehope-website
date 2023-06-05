@@ -1,4 +1,4 @@
-package live.rehope.site.endpoint.user.principle;
+package live.rehope.site.endpoint.user.principle.model;
 
 import io.javalin.security.RouteRole;
 import org.jetbrains.annotations.NotNull;

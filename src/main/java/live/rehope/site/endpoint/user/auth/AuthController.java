@@ -5,7 +5,7 @@ import io.avaje.http.api.Get;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import jakarta.inject.Inject;
-import live.rehope.site.endpoint.user.principle.PrincipleUser;
+import live.rehope.site.endpoint.user.principle.model.PrincipleUser;
 import live.rehope.site.model.ApiController;
 
 @Controller("/api/auth")
@@ -17,42 +17,19 @@ public class AuthController extends ApiController {
         this.service = service;
     }
 
-    @Get("/login/google")
-    public PrincipleUser googleLogin(Context context) {
+    @Get("/oauth/{provider}/login")
+    public PrincipleUser login(Context context, String provider) {
         if (optionalUserId(context).isPresent()) {
             throw new BadRequestResponse("Already logged in");
         }
 
-        return service.handleLogin(AuthProviderSource.GOOGLE, context);
+        AuthProviderSource source = AuthProviderSource.valueOf(provider.toUpperCase());
+        return service.handleLogin(source, context);
     }
 
-    @Get("/login/twitter")
-    public PrincipleUser twitterLogin(Context context) {
-        if (optionalUserId(context).isPresent()) {
-            throw new BadRequestResponse("Already logged in");
-        }
-
-        return service.handleLogin(AuthProviderSource.TWITTER, context);
-    }
-
-    @Get("/login/discord")
-    public PrincipleUser discordLogin(Context context) {
-        return service.handleLogin(AuthProviderSource.DISCORD, context);
-    }
-
-    @Get("/oauth/google/callback")
-    public void googleCallback(Context context) {
-        service.handleCallback(AuthProviderSource.GOOGLE, context);
-    }
-
-    @Get("/oauth/twitter/callback")
-    public void twitterCallback(Context context) {
-        service.handleCallback(AuthProviderSource.TWITTER, context);
-    }
-
-    @Get("/oauth/discord/callback")
-    public void discordCallback(Context context) {
-        service.handleCallback(AuthProviderSource.DISCORD, context);
+    @Get("/oauth/callback")
+    public void callback(Context context) {
+        service.handleCallback(context);
     }
 
     @Get("/logout")

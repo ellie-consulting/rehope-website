@@ -2,6 +2,7 @@ package live.rehope.site.bootstrap;
 
 import io.avaje.inject.BeanScope;
 import io.javalin.Javalin;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.vue.VueComponent;
 import live.rehope.site.bootstrap.config.ServerCustomizer;
 
@@ -20,6 +21,10 @@ public final class ServerBootstrap {
         // Setup
         beanScope.getOptional(ServerCustomizer.class)
                 .ifPresent(serverCustomizer -> serverCustomizer.accept(javalin.cfg));
+
+        javalin.exception(IllegalArgumentException.class, (exception, ctx) -> {
+            throw new BadRequestResponse("Provided constant is invalid: " + exception.getMessage());
+        });
 
         javalin.get("/", new VueComponent("home"));
         javalin.get("/login", new VueComponent("login"));

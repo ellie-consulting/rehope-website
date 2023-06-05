@@ -7,11 +7,12 @@ import io.avaje.http.api.Post;
 import io.javalin.http.*;
 import live.rehope.site.endpoint.EndpointRoles;
 import live.rehope.site.endpoint.user.principle.exception.InvalidUsernameException;
+import live.rehope.site.endpoint.user.principle.model.PrincipleUser;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import live.rehope.site.model.ApiController;
 import live.rehope.site.util.ContextUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller("/api/")
 public class PrincipleUserController extends ApiController {
@@ -76,7 +77,7 @@ public class PrincipleUserController extends ApiController {
         if (userId == userId(context)) {
             ContextUtils.updateUsername(context, username);
         } else {
-            // ??
+            // how will be update another's context.
         }
     }
 

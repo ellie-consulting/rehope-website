@@ -1,13 +1,16 @@
 package live.rehope.site.endpoint.user.social;
 
+import live.rehope.site.endpoint.user.social.model.UserSocial;
+import live.rehope.site.endpoint.user.social.model.UserSocialPlatform;
 import live.rehope.site.model.ApiController;
 import io.avaje.http.api.*;
-import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 
-@Controller("/api/user/:userId/socials")
+import java.util.Collection;
+
+@Controller("/api/")
 public class UserSocialsController extends ApiController {
 
     private final UserSocialsService service;
@@ -17,38 +20,35 @@ public class UserSocialsController extends ApiController {
         this.service = service;
     }
 
-    @Get
-    public void get(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
-        if (platform != null) {
-            UserSocial userSocial = service.getUserSocial(userId, platform).orElseThrow(NotFoundResponse::new);
-
-            context.json(userSocial, UserSocial.class);
-            return;
-        }
-
-        // todo respect privacy
-
-        context.json(service.getUserSocials(userId).values(), UserSocial.class);
+    @Get("/user/{userId}/socials")
+    public Collection<UserSocial> getSocials(int userId) {
+        return service.getUserSocials(userId).values();
     }
 
-    @Post
-    public void connect(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
+    @Get("/user/{userId}/social/{platform}")
+    public UserSocial getSocial(int userId, UserSocialPlatform platform) {
+        return service.getUserSocial(userId, platform).orElseThrow(() -> new NotFoundResponse("not linked"));
+    }
+
+    @Get("/user/{userId}/social/{platform}/connect")
+    public UserSocial connect(Context context, int userId, UserSocialPlatform platform) {
         assertSelfOrStaff(context, userId);
 
-        // todo need to connect via oauth
-
-//        return service.getUserSocial(userId, platform).orElseThrow(() -> );
+        return service.connectSocial(context, userId, platform);
     }
 
-    @Delete
-    public void unlink(Context context, int userId, @QueryParam("platform") UserSocialPlatform platform) {
-        if (platform == null) {
-            throw new BadRequestResponse("No platform specified");
-        }
+    @Get("/social/oauth/callback")
+    public void oauthCallback(Context context) {
+        service.handleCallback(context);
+    }
 
+    @Delete("/user/{userId}/social/{platform}")
+    public void unlink(Context context, int userId, UserSocialPlatform platform) {
         assertSelfOrStaff(context, userId);
 
         service.deleteUserSocial(userId, platform);
     }
+
+
 
 }

@@ -7,6 +7,8 @@ import io.avaje.inject.RequiresBean;
 import io.javalin.http.NotFoundResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import live.rehope.site.endpoint.user.social.model.UserSocial;
+import live.rehope.site.endpoint.user.social.model.UserSocialPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +58,8 @@ public class UserSocialsRepository extends Repository<UserSocial> {
         Map<UserSocialPlatform, UserSocial> res = new EnumMap<>(UserSocialPlatform.class);
 
         try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM ? WHERE user_id = ?");
-            statement.setString(1, TABLE);
-            statement.setInt(2, userId);
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + TABLE + " WHERE user_id = ?");
+            statement.setInt(1, userId);
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -87,10 +88,9 @@ public class UserSocialsRepository extends Repository<UserSocial> {
      */
     public Optional<UserSocial> getUserSocial(int userId, @NotNull UserSocialPlatform type) {
         try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM ? WHERE user_id = ? AND social_media = ?");
-            statement.setString(1, TABLE);
-            statement.setInt(2, userId);
-            statement.setString(3, type.toString());
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + TABLE + " WHERE user_id = ? AND social_media = ?");
+            statement.setInt(1, userId);
+            statement.setString(2, type.toString());
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -136,10 +136,9 @@ public class UserSocialsRepository extends Repository<UserSocial> {
      */
     public void deleteUserSocial(int userId, @NotNull UserSocialPlatform type) {
         try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM ? WHERE user_id = ? AND social_media = ?");
-            statement.setString(1, getTable());
-            statement.setInt(2, userId);
-            statement.setString(3, type.name());
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM " + TABLE + " WHERE user_id = ? AND social_media = ?");
+            statement.setInt(1, userId);
+            statement.setString(2, type.name());
             int deleted = statement.executeUpdate();
 
             if (deleted == 0) {

@@ -4,8 +4,8 @@ import io.avaje.http.api.Controller;
 import io.avaje.http.api.Post;
 import io.javalin.http.Context;
 import live.rehope.site.endpoint.EndpointRoles;
-import live.rehope.site.endpoint.user.principle.PrincipleUser;
-import live.rehope.site.endpoint.user.principle.UserRole;
+import live.rehope.site.endpoint.user.principle.model.PrincipleUser;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import live.rehope.site.util.ContextUtils;
 
 @Controller("/api/dev")

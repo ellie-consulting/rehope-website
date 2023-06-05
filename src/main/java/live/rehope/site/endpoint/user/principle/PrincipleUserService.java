@@ -2,6 +2,8 @@ package live.rehope.site.endpoint.user.principle;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import live.rehope.site.endpoint.user.principle.model.PrincipleUser;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import org.jetbrains.annotations.NotNull;
 import live.rehope.site.endpoint.user.principle.exception.InvalidUsernameException;
 import live.rehope.site.endpoint.user.social.UserSocialsService;
@@ -76,7 +78,7 @@ public class PrincipleUserService {
     }
 
     public Optional<PrincipleUser> getUserByUsername(@NotNull String username) {
-        return principleUserRepository.getUserByEmail(username);
+        return principleUserRepository.getUserByUsername(username);
     }
 
     public Optional<PrincipleUser> getUserByProviderId(@NotNull String providerId) {

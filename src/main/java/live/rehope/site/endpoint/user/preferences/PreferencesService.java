@@ -2,6 +2,7 @@ package live.rehope.site.endpoint.user.preferences;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import live.rehope.site.endpoint.user.preferences.model.UserPreferences;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
