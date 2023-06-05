@@ -3,7 +3,7 @@ plugins {
     `java-library`
 }
 
-group = "services.spice.kazsite"
+group = "live.rehope"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -16,15 +16,18 @@ dependencies {
     implementation("org.jetbrains:annotations:24.0.1")
 
     // Web server
-    implementation("io.javalin:javalin:5.4.2")
+    implementation("io.javalin:javalin:5.5.0")
 
     // Avaje
-    implementation("io.avaje:avaje-config:3.2")
-    implementation("io.avaje:avaje-http-api:1.39")
-    annotationProcessor("io.avaje:avaje-http-javalin-generator:1.31")
-    // inject
-    implementation("io.avaje:avaje-inject:9.1-RC2")
-    annotationProcessor("io.avaje:avaje-inject-generator:9.1-RC2")
+    // https://mvnrepository.com/artifact/io.avaje/avaje-config
+    implementation("io.avaje:avaje-config:3.4")
+    // https://mvnrepository.com/artifact/io.avaje/avaje-http-api
+    implementation("io.avaje:avaje-http-api:1.41")
+    // https://mvnrepository.com/artifact/io.avaje/avaje-http-javalin-generator
+    annotationProcessor("io.avaje:avaje-http-javalin-generator:1.41")
+    // https://mvnrepository.com/artifact/io.avaje/avaje-inject
+    implementation("io.avaje:avaje-inject:9.2")
+    annotationProcessor("io.avaje:avaje-inject-generator:9.2")
 
     // Pac (Security)
     implementation("org.pac4j:javalin-pac4j:6.0.0")
