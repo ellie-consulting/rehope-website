@@ -1,6 +1,8 @@
-package live.rehope.site.endpoint.media;
+package live.rehope.site.endpoint.creator;
 
-import live.rehope.site.endpoint.media.model.MediaCreator;
+import io.avaje.inject.RequiresBean;
+import io.javalin.http.NotFoundResponse;
+import live.rehope.site.endpoint.creator.model.MediaCreator;
 import io.javalin.http.BadRequestResponse;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,7 @@ import java.util.Optional;
  * Repository for storing media channels connections.
  */
 @Singleton
+@RequiresBean(PrincipleUserRepository.class)
 public class MediaChannelRepository extends Repository<MediaCreator> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaChannelRepository.class);
     private static final String TABLE = "media_channels";
@@ -66,6 +69,14 @@ public class MediaChannelRepository extends Repository<MediaCreator> {
                 throw new BadRequestResponse("user id already assigned to a channel");
             }
         } catch (SQLException e) {
+            if (e.getMessage().contains("not present")) {
+                throw new NotFoundResponse("user " + userId + " does not exist");
+            }
+
+            if (e.getMessage().contains("duplicate key")) {
+                throw new BadRequestResponse(userId + " already linked");
+            }
+
             getLogger().error("failed to add channel connection for {} -> {}", userId, channelId);
             e.printStackTrace();
             throw new DatabaseError();

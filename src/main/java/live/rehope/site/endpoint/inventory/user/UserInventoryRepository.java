@@ -1,5 +1,6 @@
 package live.rehope.site.endpoint.inventory.user;
 
+import io.javalin.http.BadRequestResponse;
 import live.rehope.site.datasource.PostgreDatasource;
 import live.rehope.site.datasource.exception.DatabaseError;
 import live.rehope.site.endpoint.user.principle.PrincipleUserRepository;
@@ -103,7 +104,11 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
                 throw new DatabaseError();
             }
         } catch (SQLException e) {
-            LOGGER.error("failed to add {} to user's {} inventory from unlock code {}", elementId, unlockCode, unlockCode);
+            if (e.getMessage().contains("not present")) {
+                throw new NotFoundResponse("no inventory element by id " + elementId);
+            }
+
+            LOGGER.error("failed to add {} to user {}'s {} inventory from unlock code {}", elementId, userId, unlockCode, unlockCode);
             e.printStackTrace();
             throw new DatabaseError();
         }
@@ -143,7 +148,6 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
      * @param userId User id to remove from.
      * @param elementId Element to remove from.
      * @param contextUser Element unlock context.
-     * @return If there was anything removed.
      */
     public void removeElementFromInventory(int userId, int elementId, @Nullable Integer contextUser) {
         try (Connection connection = datasource.getConnection()) {

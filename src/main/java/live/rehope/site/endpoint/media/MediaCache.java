@@ -34,6 +34,8 @@ public class MediaCache {
      */
     public void setUserTracking(int userId, @NotNull String channelId) {
         profiles.computeIfAbsent(userId, integer -> new MediaProfile(userId, channelId));
+
+        refresh(userId);
     }
 
     /**
@@ -59,6 +61,33 @@ public class MediaCache {
     }
 
     /**
+     * Get the live stream of a user id.
+     *
+     * @param userId User id to get of.
+     * @return Any livestream.
+     */
+    public Optional<Media> getLiveStreamOf(int userId) {
+        MediaProfile profile = profiles.get(userId);
+        if (profile == null) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(profile.getLiveStream());
+    }
+
+    /**
+     * Get all live streams.
+     *
+     * @return Live streams.
+     */
+    @NotNull
+    public List<Media> getVideos() {
+        return profiles.values().stream()
+                .flatMap(mediaProfile -> mediaProfile.getVideos().stream())
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Get videos of a user id.
      *
      * @param userId User id to get.
@@ -72,21 +101,6 @@ public class MediaCache {
         }
 
         return profile.getVideos();
-    }
-
-    /**
-     * Get the live stream of a user id.
-     *
-     * @param userId User id to get of.
-     * @return Any livestream.
-     */
-    public Optional<Media> getLiveStreamOf(int userId) {
-        MediaProfile profile = profiles.get(userId);
-        if (profile == null) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(profile.getLiveStream());
     }
 
     /**
@@ -104,11 +118,11 @@ public class MediaCache {
 
         try {
             // don't filter for date if live, because we need to know if it finished.
-            boolean newContentOnly = profile.getLiveStream() == null;
+            boolean newContentOnly = profile.hasBeenLoaded() && profile.getLiveStream() == null;
 
             List<Media> content = youTubeClient.getChannelContent(
                     profile.getUserId(), profile.getChannelId(), 10,
-                    newContentOnly ? profile.getLastRefresh() : null
+                    newContentOnly ? profile.getLastRefreshMillis() : null
             );
 
             profile.setLastRefresh(System.currentTimeMillis());
@@ -142,7 +156,7 @@ public class MediaCache {
     }
 
     private boolean canRefresh(MediaProfile profile) {
-        return System.currentTimeMillis() - profile.getLastRefreshMillis() > MIN_REFRESH_TIME;
+        return !profile.hasBeenLoaded() || System.currentTimeMillis() - profile.getLastRefreshMillis() > MIN_REFRESH_TIME;
     }
 
 

@@ -3,7 +3,7 @@ package live.rehope.site.endpoint.media.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,11 +17,12 @@ public class MediaProfile {
     private Media liveStream;
     private List<Media> videos;
 
-    private long lastRefresh;
+    private Long lastRefresh;
 
     public MediaProfile(int userId, @NotNull String channelId) {
         this.userId = userId;
         this.channelId = channelId;
+        this.videos = new LinkedList<>();
     }
 
     public int getUserId() {
@@ -65,12 +66,13 @@ public class MediaProfile {
         this.videos = videos;
     }
 
-    public long getLastRefreshMillis() {
-        return lastRefresh;
+    public boolean hasBeenLoaded() {
+        return lastRefresh != null;
     }
 
-    public Date getLastRefresh() {
-        return new Date(lastRefresh);
+    @Nullable
+    public Long getLastRefreshMillis() {
+        return lastRefresh;
     }
 
     public void setLastRefresh(long lastRefresh) {

@@ -13,10 +13,7 @@ import live.rehope.site.endpoint.media.model.MediaType;
 import live.rehope.site.endpoint.user.principle.PrincipleUserRepository;
 import live.rehope.site.model.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 @Singleton
@@ -55,11 +52,12 @@ public class FeaturedMediaRepository extends Repository<Media> {
         featuredContent.add(media);
 
         try (Connection connection = datasource.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + TABLE + " (user_id, channel_id, video_url) " +
-                    "VALUES (?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + TABLE
+                    + " (user_id, channel_id, video_url, published_at) VALUES (?, ?, ?, ?)");
             statement.setInt(1, media.userId());
             statement.setString(2, media.channelId());
             statement.setString(3, media.url());
+            statement.setTimestamp(4, new Timestamp(media.publishedAt()));
 
             if (statement.executeUpdate() == 0) {
                 throw new BadRequestResponse("media already added");
@@ -81,6 +79,10 @@ public class FeaturedMediaRepository extends Repository<Media> {
         deleteData("video_url", url);
     }
 
+    public void removeMediaByUserId(int userId) {
+        deleteData("user_id", userId);
+    }
+
     @Override
     public String getTable() {
         return TABLE;
@@ -96,7 +98,9 @@ public class FeaturedMediaRepository extends Repository<Media> {
         int userId = resultSet.getInt("user_id");
         String channelId = resultSet.getString("channel_id");
         String videoUrl = resultSet.getString("video_url");
-        return new Media(userId, channelId, videoUrl, MediaType.VIDEO);
+        long publishedAt = resultSet.getTimestamp("published_at").getTime();
+
+        return new Media(userId, channelId, videoUrl, MediaType.VIDEO, publishedAt);
     }
 
     @Override
@@ -106,7 +110,9 @@ public class FeaturedMediaRepository extends Repository<Media> {
                     "id SERIAL PRIMARY KEY," +
                     "user_id INTEGER NOT NULL REFERENCES " + PrincipleUserRepository.TABLE + "(id) ON DELETE CASCADE," +
                     "channel_id VARCHAR(24) NOT NULL," +
-                    "video_url VARCHAR(64) UNIQUE NOT NULL" +
+                    "video_url VARCHAR(64) UNIQUE NOT NULL," +
+                    "featured_since TIMESTAMP NOT NULL DEFAULT NOW()," +
+                    "published_at TIMESTAMP NOT NULL" +
                     ");").execute();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create featured media table", e);

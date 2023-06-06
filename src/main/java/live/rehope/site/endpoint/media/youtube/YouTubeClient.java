@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.inject.Singleton;
+import live.rehope.site.util.DateUtils;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,8 +13,11 @@ import live.rehope.site.endpoint.media.model.Media;
 import live.rehope.site.endpoint.media.model.MediaType;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +32,6 @@ public class YouTubeClient {
     private static final String BASE_URL = "https://www.googleapis.com/youtube/v3";
     private static final String KEY_SUFFIX = "?key=%s";
     private static final String VIDEO_URL = "https://youtu.be/%s";
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX"); // rfc-3339
 
     private final OkHttpClient client;
     private String key;
@@ -86,8 +89,9 @@ public class YouTubeClient {
      * @throws IOException If an error occurs making the request.
      */
     @NotNull
-    public List<Media> getChannelContent(int userId, String channelId, int maxResults, @Nullable Date publishedAfter)
+    public List<Media> getChannelContent(int userId, String channelId, int maxResults, @Nullable Long publishedAfter)
             throws IOException {
+        //https://www.googleapis.com/youtube/v3/search?key=AIzaSyCMS-PgP2coQcJe6oHhOmBpH17h7lLplE0&channelId=UCm0bEce19ywHDfCGvSHVyYQ&maxResults=3&part=snippet&order=date&type=video
         String url = createApiUrl("/search");
         url += addQuery("channelId", channelId);
         url += addQuery("maxResults", String.valueOf(maxResults));
@@ -95,12 +99,14 @@ public class YouTubeClient {
         url += addQuery("order", "date");
         url += addQuery("type", "video");
         if (publishedAfter != null) {
-            url += addQuery("publishedAfter", DATE_FORMAT.format(publishedAfter));
+            url += addQuery("publishedAfter", DateUtils.formatMillisRfc(publishedAfter));
         }
+
+        System.out.println("url " + url);
 
         // https://developers.google.com/youtube/v3/docs/search/list
         Request request = new Request.Builder()
-                .url(createApiUrl(url))
+                .url(url)
                 .addHeader("Content-Type", "application/json")
                 .build();
 
@@ -119,12 +125,15 @@ public class YouTubeClient {
                 String videoId = videoObject.getAsJsonObject("id")
                         .getAsJsonPrimitive("videoId").getAsString();
 
-                JsonObject videDetails = videoObject.getAsJsonObject("snippet");
-                boolean liveStream = videDetails.getAsJsonPrimitive("liveBroadcastContent").getAsString()
+                JsonObject videoDetails = videoObject.getAsJsonObject("snippet");
+                boolean liveStream = videoDetails.getAsJsonPrimitive("liveBroadcastContent").getAsString()
                         .equals("live");
+                String publishAtString = videoDetails.getAsJsonPrimitive("publishAt").getAsString();
+                long publishedAt = DateUtils.fromRfc(publishAtString);
+
                 String videoUrl = createVideoUrl(videoId);
 
-                res.add(new Media(userId, channelId, videoUrl, liveStream ? MediaType.STREAM : MediaType.VIDEO));
+                res.add(new Media(userId, channelId, videoUrl, liveStream ? MediaType.STREAM : MediaType.VIDEO, publishedAt));
             }
         }
 

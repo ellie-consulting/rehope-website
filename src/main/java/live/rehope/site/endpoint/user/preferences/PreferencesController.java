@@ -1,15 +1,16 @@
 package live.rehope.site.endpoint.user.preferences;
 
+import io.javalin.http.NotFoundResponse;
+import live.rehope.site.endpoint.EndpointRoles;
 import live.rehope.site.endpoint.user.preferences.model.UserPreferences;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import live.rehope.site.model.ApiController;
 import io.avaje.http.api.*;
 import io.javalin.http.Context;
-import io.javalin.http.HttpStatus;
 import jakarta.inject.Inject;
 
-import java.util.Optional;
-
 @Controller("/api/user/{userId}/preferences")
+@EndpointRoles(UserRole.USER)
 public class PreferencesController extends ApiController {
 
     private final PreferencesService service;
@@ -20,28 +21,24 @@ public class PreferencesController extends ApiController {
     }
 
     @Get
-    public void get(Context context, int userId, @QueryParam("id") String preferenceId) {
+    public UserPreferences getPreferences(Context context, int userId) {
         assertSelfOrStaff(context, userId);
 
-        if (preferenceId != null) {
-            boolean preferenceState = service.getPreferenceState(userId, preferenceId);
-            context.json(preferenceState);
-            return;
-        }
-
-        Optional<UserPreferences> userPreferences = service.getUserPreferences(userId);
-        if (userPreferences.isPresent()) {
-            context.json(userPreferences.get());
-        } else {
-            context.status(HttpStatus.NOT_FOUND);
-        }
+        return service.getUserPreferences(userId).orElseThrow(NotFoundResponse::new);
     }
 
-    @Post
-    public void set(Context context, int userId, String preferenceId, boolean value) {
+    @Get("/{preference}")
+    public boolean getPreference(Context context, int userId, String preference) {
         assertSelfOrStaff(context, userId);
 
-        service.updatePreference(userId, preferenceId, value);
+        return service.getPreferenceState(userId, preference);
+    }
+
+    @Post("/{preference}/{value}")
+    public void set(Context context, int userId, String preference, boolean value) {
+        assertSelfOrStaff(context, userId);
+
+        service.updatePreference(userId, preference, value);
     }
 
 }

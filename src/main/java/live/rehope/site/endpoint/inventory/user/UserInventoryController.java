@@ -6,10 +6,11 @@ import live.rehope.site.model.ApiController;
 import io.avaje.http.api.*;
 import io.javalin.http.Context;
 import jakarta.inject.Inject;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-@Controller("/api/user/:userId/inventory")
+@Controller("/api/user/{userId}/inventory")
 public class UserInventoryController extends ApiController {
 
     private final UserInventoryService inventoryService;
@@ -27,7 +28,7 @@ public class UserInventoryController extends ApiController {
         return inventoryService.getInventory(userId);
     }
 
-    @Get("/context/:streamerId")
+    @Get("/context/{streamerId}")
     @EndpointRoles(UserRole.USER)
     public List<UserInventoryElement> getInventory(Context context, int userId, int streamerId) {
         assertSelfOrStaff(context, userId);
@@ -35,15 +36,15 @@ public class UserInventoryController extends ApiController {
         return inventoryService.getInventoryInContext(userId, streamerId);
     }
 
-    @Post
+    @Post("/{elementId}")
     @EndpointRoles(UserRole.ADMIN)
     public void addItem(int userId, int elementId) {
         inventoryService.addToInventory(userId, elementId);
     }
 
-    @Delete
+    @Delete("/{elementId}")
     @EndpointRoles(UserRole.ADMIN)
-    public void removeItem(int userId, int elementId, @QueryParam Integer userContext) {
+    public void removeItem(int userId, int elementId, @Nullable @QueryParam Integer userContext) {
         inventoryService.deleteItemFromInventory(userId, elementId, userContext);
     }
 

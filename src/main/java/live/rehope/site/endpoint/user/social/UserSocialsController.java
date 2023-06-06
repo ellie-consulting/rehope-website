@@ -1,5 +1,7 @@
 package live.rehope.site.endpoint.user.social;
 
+import live.rehope.site.endpoint.EndpointRoles;
+import live.rehope.site.endpoint.user.principle.model.UserRole;
 import live.rehope.site.endpoint.user.social.model.UserSocial;
 import live.rehope.site.endpoint.user.social.model.UserSocialPlatform;
 import live.rehope.site.model.ApiController;
@@ -21,16 +23,19 @@ public class UserSocialsController extends ApiController {
     }
 
     @Get("/user/{userId}/socials")
+    @EndpointRoles(UserRole.USER)
     public Collection<UserSocial> getSocials(int userId) {
         return service.getUserSocials(userId).values();
     }
 
     @Get("/user/{userId}/social/{platform}")
+    @EndpointRoles(UserRole.USER)
     public UserSocial getSocial(int userId, UserSocialPlatform platform) {
         return service.getUserSocial(userId, platform).orElseThrow(() -> new NotFoundResponse("not linked"));
     }
 
     @Get("/user/{userId}/social/{platform}/connect")
+    @EndpointRoles(UserRole.USER)
     public UserSocial connect(Context context, int userId, UserSocialPlatform platform) {
         assertSelfOrStaff(context, userId);
 
@@ -38,11 +43,13 @@ public class UserSocialsController extends ApiController {
     }
 
     @Get("/social/oauth/callback")
+    @EndpointRoles(UserRole.USER)
     public void oauthCallback(Context context) {
         service.handleCallback(context);
     }
 
     @Delete("/user/{userId}/social/{platform}")
+    @EndpointRoles(UserRole.USER)
     public void unlink(Context context, int userId, UserSocialPlatform platform) {
         assertSelfOrStaff(context, userId);
 

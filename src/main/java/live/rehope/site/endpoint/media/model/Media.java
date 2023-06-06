@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * @param channelId Their channel id.
  * @param url The video url.
  * @param mediaType The media type, video or live stream.
+ * @param publishedAt When the video was published.
  */
-public record Media(int userId, @NotNull String channelId, @NotNull String url, MediaType mediaType) {
+public record Media(int userId, @NotNull String channelId, @NotNull String url, MediaType mediaType, long publishedAt) {
 }
