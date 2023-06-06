@@ -2,6 +2,7 @@ package live.rehope.site.endpoint.media;
 
 import io.avaje.inject.RequiresBean;
 import io.javalin.http.BadRequestResponse;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import live.rehope.site.endpoint.user.principle.PrincipleUserRepository;
 import live.rehope.site.model.Repository;
 
 import java.sql.*;
+import java.util.LinkedList;
 import java.util.List;
 
 @Singleton
@@ -26,6 +28,7 @@ public class FeaturedMediaRepository extends Repository<Media> {
 
     // todo live stream can be featured too.
 
+    @Inject
     public FeaturedMediaRepository(PostgreDatasource datasource) {
         super(datasource);
     }
@@ -49,23 +52,40 @@ public class FeaturedMediaRepository extends Repository<Media> {
      * @param media Media to add.
      */
     public void addMedia(@NotNull Media media) {
-        featuredContent.add(media);
-
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + TABLE
-                    + " (user_id, channel_id, video_url, published_at) VALUES (?, ?, ?, ?)");
+                    + " (user_id, channel_id, video_url, published_at) VALUES (?, ?, ?, ?) RETURNING id");
             statement.setInt(1, media.userId());
             statement.setString(2, media.channelId());
             statement.setString(3, media.url());
-            statement.setTimestamp(4, new Timestamp(media.publishedAt()));
+            statement.setTimestamp(4, new Timestamp(media.publishedAt() == 0 ? System.currentTimeMillis() : media.publishedAt()));
 
-            if (statement.executeUpdate() == 0) {
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                // add to cache
+                getAll().add(getById(resultSet.getInt("id")).orElseThrow());
+            } else {
                 throw new BadRequestResponse("media already added");
             }
         } catch (SQLException e) {
+            if (e.getMessage().contains("unique constraint")) {
+                throw new BadRequestResponse("url already in use");
+            }
+
             getLogger().error("failed to add media " + media, e);
             throw new DatabaseError();
         }
+    }
+
+    /**
+     * Remove a featured media by its id.
+     *
+     * @param featureId Feature id.
+     */
+    public void removeMediaById(int featureId) {
+        featuredContent.removeIf(media -> media.featuredId() == featureId);
+
+        deleteDataById(featureId);
     }
 
     /**
@@ -73,7 +93,7 @@ public class FeaturedMediaRepository extends Repository<Media> {
      *
      * @param url Url to remove.
      */
-    public void removeMedia(@NotNull String url) {
+    public void removeMediaByUrl(@NotNull String url) {
         featuredContent.removeIf(media -> media.url().equalsIgnoreCase(url));
 
         deleteData("video_url", url);
@@ -95,12 +115,13 @@ public class FeaturedMediaRepository extends Repository<Media> {
 
     @Override
     protected Media mapResultSetToType(@NotNull ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
         int userId = resultSet.getInt("user_id");
         String channelId = resultSet.getString("channel_id");
         String videoUrl = resultSet.getString("video_url");
         long publishedAt = resultSet.getTimestamp("published_at").getTime();
 
-        return new Media(userId, channelId, videoUrl, MediaType.VIDEO, publishedAt);
+        return new Media(id, userId, channelId, videoUrl, MediaType.VIDEO, publishedAt);
     }
 
     @Override

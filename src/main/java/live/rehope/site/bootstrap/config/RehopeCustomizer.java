@@ -34,8 +34,6 @@ public class RehopeCustomizer implements ServerCustomizer {
 
         config.jetty.sessionHandler(() -> sessionHandler);
         config.accessManager((handler, context, permittedRoles) -> {
-            System.out.println(context.method() + " " + context.fullUrl());
-
             if (DEV) {
                 handler.handle(context);
                 return;

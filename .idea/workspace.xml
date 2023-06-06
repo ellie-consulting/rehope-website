@@ -4,26 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f776b3f-d51d-4673-b2ee-792826c843ab" name="Changes" comment="connect some socials :)">
-      <change afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/creator/CreatorController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/creator/CreatorService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/creator/model/CreatorUpdateListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/util/DateUtils.java" afterDir="false" />
+    <list default="true" id="5f776b3f-d51d-4673-b2ee-792826c843ab" name="Changes" comment="creator linking + video polling">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-keys/youtube-key.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/inventory/user/UserInventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/inventory/user/UserInventoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/inventory/user/UserInventoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/inventory/user/UserInventoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/bootstrap/config/RehopeCustomizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/bootstrap/config/RehopeCustomizer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/datasource/Datasource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/datasource/Datasource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/datasource/PostgreDatasource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/datasource/PostgreDatasource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/FeaturedMediaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/FeaturedMediaRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaCache.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaChannelRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/creator/MediaChannelRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/model/Media.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/model/Media.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/model/MediaCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/creator/model/MediaCreator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/model/MediaProfile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/model/MediaProfile.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/youtube/YouTubeClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/youtube/YouTubeClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/user/preferences/PreferencesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/user/preferences/PreferencesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/user/social/UserSocialsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/user/social/UserSocialsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/user/principle/PrincipleUserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/user/principle/PrincipleUserRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -252,7 +243,7 @@
       <workItem from="1685700018942" duration="33000" />
       <workItem from="1685726475841" duration="5000" />
       <workItem from="1685962479886" duration="18399000" />
-      <workItem from="1686043224014" duration="6438000" />
+      <workItem from="1686043224014" duration="8360000" />
     </task>
     <task id="LOCAL−00001" summary="initial commit w db, princp user + inventory">
       <created>1683313627644</created>
@@ -314,7 +305,13 @@
       <option name="presentableId" value="LOCAL−00010" />
       <updated>1685988688677</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL−00011" summary="creator linking + video polling">
+      <created>1686049819314</created>
+      <option name="number" value="LOCAL−00011" />
+      <option name="presentableId" value="LOCAL−00011" />
+      <updated>1686049819314</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -345,7 +342,8 @@
     <MESSAGE value="refractor response handling" />
     <MESSAGE value="change package name to live.rehope + some endpoint refractor + additions" />
     <MESSAGE value="connect some socials :)" />
-    <option name="LAST_COMMIT_MESSAGE" value="connect some socials :)" />
+    <MESSAGE value="creator linking + video polling" />
+    <option name="LAST_COMMIT_MESSAGE" value="creator linking + video polling" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -9,6 +9,7 @@ import live.rehope.site.endpoint.user.principle.model.UserRole;
 import io.javalin.http.Context;
 import io.javalin.http.UnauthorizedResponse;
 import live.rehope.site.endpoint.media.model.Media;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -32,16 +33,18 @@ public class MediaController {
         service.addFeaturedMedia(media);
     }
 
-    @Delete("/feature/url/{url}")
+    @Delete("/feature/")
     @EndpointRoles(UserRole.ADMIN)
-    public void deleteFeaturedMedia(String url) {
-        service.removeFeaturedMedia(url);
-    }
+    public void deleteFeaturedMedia(@Nullable @QueryParam Integer featureId, @QueryParam Integer userId) {
+        if (featureId == null && userId == null) {
+            throw new BadRequestResponse("missing featureId or userId query params");
+        }
 
-    @Delete("/feature/user/{userId}")
-    @EndpointRoles(UserRole.ADMIN)
-    public void deleteFeaturedMedia(int userId) {
-        service.removeFeaturedMediaByUserid(userId);
+        if (featureId != null) {
+            service.removeFeaturedMediaById(featureId);
+        } else {
+            service.removeFeaturedMediaByUserId(userId);
+        }
     }
 
     @Get("/streams")

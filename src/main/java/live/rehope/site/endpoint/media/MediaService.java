@@ -43,21 +43,20 @@ public class MediaService implements CreatorUpdateListener {
     }
 
     /**
-     * Remove a featured media by its url.
+     * Remove a featured media by feature id.
      *
-     * @param url Url to remove.
+     * @param featuredId Its feature id from the db.
      */
-    public void removeFeaturedMedia(@NotNull String url) {
-        featuredRepository.removeMedia(url);
+    public void removeFeaturedMediaById(int featuredId) {
+        featuredRepository.removeMediaById(featuredId);
     }
 
-    public void removeFeaturedMediaByUserid(int userId) {
+    public void removeFeaturedMediaByUserId(int userId) {
         featuredRepository.removeMediaByUserId(userId);
     }
 
-
     /**
-     * @return Get all current cached live streams.
+     * @return Get all current" cached live streams.
      */
     @NotNull
     public List<Media> getLiveStreams() {

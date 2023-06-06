@@ -91,7 +91,6 @@ public class PrincipleUserRepository extends Repository<PrincipleUser> {
     }
 
     public void setUsername(int id, String newUsername) {
-        System.out.println("username " + id);
         updateFieldById(id, "username", newUsername);
     }
 

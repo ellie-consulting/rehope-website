@@ -128,7 +128,7 @@ public class YouTubeClient {
                 JsonObject videoDetails = videoObject.getAsJsonObject("snippet");
                 boolean liveStream = videoDetails.getAsJsonPrimitive("liveBroadcastContent").getAsString()
                         .equals("live");
-                String publishAtString = videoDetails.getAsJsonPrimitive("publishAt").getAsString();
+                String publishAtString = videoDetails.getAsJsonPrimitive("publishedAt").getAsString();
                 long publishedAt = DateUtils.fromRfc(publishAtString);
 
                 String videoUrl = createVideoUrl(videoId);

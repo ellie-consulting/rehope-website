@@ -1,6 +1,7 @@
 package live.rehope.site.datasource;
 
 import com.zaxxer.hikari.HikariDataSource;
+import io.avaje.inject.PreDestroy;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -14,8 +15,8 @@ public class PostgreDatasource implements Datasource<Connection> {
     }
 
     @Override
+    @PreDestroy
     public void close() {
-        System.out.println("close");
         if (!isConnected()) {
             return;
         }
