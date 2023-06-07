@@ -23,7 +23,7 @@ public class AuthProviders {
 
     public AuthProviders(@Named("oauth") Google2Client google2Client, @Named("oauth") TwitterClient twitterClient,
                          @Named("oauth") DiscordClient discordClient) {
-        this.config = new Config("http://127.0.0.1:8080/api/auth/oauth/callback", google2Client, twitterClient, discordClient);
+        this.config = new Config(io.avaje.config.Config.get("auth.oauth.callback"), google2Client, twitterClient, discordClient);
         config.getClients().setCallbackUrlResolver(new NoParameterCallbackUrlResolver());
         this.callbackHandler = new CallbackHandler(config, "/", true);
         this.logoutHandler = new LogoutHandler(config, "/?");

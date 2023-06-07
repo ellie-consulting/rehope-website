@@ -56,6 +56,4 @@ public class UserSocialsController extends ApiController {
         service.deleteUserSocial(userId, platform);
     }
 
-
-
 }

@@ -24,7 +24,7 @@ public class PreferencesController extends ApiController {
     public UserPreferences getPreferences(Context context, int userId) {
         assertSelfOrStaff(context, userId);
 
-        return service.getUserPreferences(userId).orElseThrow(NotFoundResponse::new);
+        return service.getUserPreferences(userId);
     }
 
     @Get("/{preference}")

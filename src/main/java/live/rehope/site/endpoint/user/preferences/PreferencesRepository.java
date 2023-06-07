@@ -1,9 +1,10 @@
 package live.rehope.site.endpoint.user.preferences;
 
 import io.avaje.inject.RequiresBean;
-import io.javalin.http.NotFoundResponse;
+import io.javalin.http.BadRequestResponse;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import live.rehope.site.endpoint.user.preferences.model.Preference;
 import live.rehope.site.endpoint.user.preferences.model.UserPreferences;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,14 +26,6 @@ import java.util.Set;
 public class PreferencesRepository extends Repository<UserPreferences> {
     private static final String TABLE = "user_preferences";
     private static final Logger LOGGER = LoggerFactory.getLogger(PreferencesRepository.class);
-
-    /**
-     * Preference keys.
-     */
-    private static final Set<String> PREFERENCE_KEYS = Set.of(
-            "mailing_list", "private_profile",
-            "animated_background", "animated_interfaces", "site_music"
-    );
 
     @Inject
     public PreferencesRepository(PostgreDatasource datasource) {
@@ -63,26 +57,22 @@ public class PreferencesRepository extends Repository<UserPreferences> {
      * Get the state of a single preference.
      *
      * @param userId User id.
-     * @param settingId Setting id.
+     * @param preference Preference
      * @return The state.
      */
-    public boolean getPreferenceState(int userId, @NotNull String settingId) {
-        if (!PREFERENCE_KEYS.contains(settingId.toLowerCase())) {
-            return false;
-        }
-
+    public boolean getPreferenceState(int userId, @NotNull Preference preference) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("SELECT ? FROM " + TABLE + " WHERE user_id = ? LIMIT 1");
-            statement.setString(1, settingId);
+            statement.setString(1, preference.getSqlKey());
             statement.setInt(2, userId);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getBoolean(settingId);
+                return resultSet.getBoolean(preference.getSqlKey());
             }
 
         } catch (SQLException e) {
-            getLogger().error("failed to get preference state of {} for {}", settingId, userId);
+            getLogger().error("failed to get preference state of {} for {}", preference.getFieldName(), userId);
             e.printStackTrace();
         }
 
@@ -93,15 +83,26 @@ public class PreferencesRepository extends Repository<UserPreferences> {
      * Update a user preference.
      *
      * @param userId User to set for.
-     * @param settingId Setting id.
+     * @param preference Preference
      * @param state Preference state.
      */
-    public void updatePreference(int userId, @NotNull String settingId, boolean state) {
-        if (!PREFERENCE_KEYS.contains(settingId.toLowerCase())) {
-            throw new NotFoundResponse(settingId + " is not a valid preference key.");
-        }
+    public void updatePreference(int userId, @NotNull Preference preference, boolean state) {
+        String key = preference.getSqlKey();
 
-        updateField("user_id", userId, settingId.toLowerCase(), state);
+        try (Connection connection = datasource.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO " + TABLE + " " +
+                    " (user_id, " + key + ") VALUES (?, ?)" +
+                    "ON CONFLICT (user_id) DO UPDATE SET " + key + " = EXCLUDED." + key);
+            statement.setInt(1, userId);
+            statement.setBoolean(2, state);
+
+            if (statement.executeUpdate() == 0) {
+                throw new BadRequestResponse(preference + " was already set to " + state);
+            }
+        } catch (SQLException e) {
+            getLogger().error("failed to set preference state of {} for {} -> {}", userId, preference, state);
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -120,7 +121,7 @@ public class PreferencesRepository extends Repository<UserPreferences> {
     protected void createTableIfNotExists() {
         try (Connection connection = datasource.getConnection()) {
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-                    "id SERIAL PRIMARY KEY," +
+                    "id SERIAL," +
                     "user_id INTEGER NOT NULL UNIQUE REFERENCES " + PrincipleUserRepository.TABLE + "(id) ON DELETE CASCADE," +
                     "mailing_list BOOLEAN default true," +
                     "private_profile BOOLEAN default false," +

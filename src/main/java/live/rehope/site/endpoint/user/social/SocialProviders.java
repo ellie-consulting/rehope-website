@@ -22,13 +22,13 @@ public class SocialProviders {
     private final CallbackHandler callbackHandler;
 
     public SocialProviders(@Named("social") DiscordClient discordClient) {
-        this.config = new Config("http://127.0.0.1:8080/api/social/oauth/callback", discordClient);
+        this.config = new Config(io.avaje.config.Config.get("social.oauth.callback"), discordClient);
         config.getClients().setCallbackUrlResolver(new NoParameterCallbackUrlResolver());
         DefaultSecurityLogic securityLogic = new DefaultSecurityLogic();
         securityLogic.setLoadProfilesFromSession(false);
         config.setSecurityLogic(securityLogic);
 
-        this.callbackHandler = new CallbackHandler(config, "/connected", false);
+        this.callbackHandler = new CallbackHandler(config, "/", false);
     }
 
     public void handleSocialConnect(@NotNull UserSocialPlatform platform, @NotNull Context context) {

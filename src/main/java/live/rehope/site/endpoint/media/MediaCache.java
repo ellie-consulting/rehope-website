@@ -1,5 +1,6 @@
 package live.rehope.site.endpoint.media;
 
+import io.avaje.config.Config;
 import live.rehope.site.endpoint.media.model.Media;
 import live.rehope.site.endpoint.media.model.MediaProfile;
 import live.rehope.site.endpoint.media.youtube.YouTubeClient;
@@ -112,7 +113,7 @@ public class MediaCache {
      */
     public boolean refresh(int userId) {
         MediaProfile profile = profiles.get(userId);
-        if (profile == null || !canRefresh(profile)) {
+        if (profile == null || !Config.enabled("media.youtube.load") || !canRefresh(profile)) {
             return false;
         }
 

@@ -1,6 +1,7 @@
 package live.rehope.site.bootstrap.config;
 
 import com.google.gson.Gson;
+import io.avaje.config.Config;
 import io.javalin.json.JavalinGson;
 import live.rehope.site.endpoint.user.principle.model.UserRole;
 import io.javalin.config.JavalinConfig;
@@ -18,7 +19,8 @@ public class RehopeCustomizer implements ServerCustomizer {
 
     private final Gson gson;
     private final SessionHandler sessionHandler;
-    private static final boolean DEV = true;
+    private static final boolean DEV = Config.get("env").equals("DEV")
+            && Config.get("host.domain").contains("127.0.0.1");
 
     @Inject
     public RehopeCustomizer(Gson gson, SessionHandler handler) {

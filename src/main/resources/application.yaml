@@ -1,0 +1,16 @@
+env: DEV
+
+host:
+  domain: "http://127.0.0.1:8080"
+
+auth:
+  oauth:
+    callback: "http://127.0.0.1:8080/api/auth/oauth/callback"
+
+social:
+  oauth:
+    callback: "http://127.0.0.1:8080/api/social/oauth/callback"
+
+media:
+  youtube:
+    load: false

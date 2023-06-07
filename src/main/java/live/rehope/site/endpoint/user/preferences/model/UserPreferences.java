@@ -9,4 +9,8 @@ public record UserPreferences(int userId,
                               /* Site settings */
                               boolean animatedBackground, boolean animatedInterfaces, boolean siteMusic) {
 
+    public static UserPreferences defaults(int userId) {
+        return new UserPreferences(userId, true, false, true, true, true);
+    }
+
 }
