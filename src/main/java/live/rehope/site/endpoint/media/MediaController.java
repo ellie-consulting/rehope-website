@@ -3,6 +3,7 @@ package live.rehope.site.endpoint.media;
 import io.avaje.http.api.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.NotFoundResponse;
+import jakarta.inject.Inject;
 import live.rehope.site.endpoint.EndpointRoles;
 import live.rehope.site.endpoint.media.model.VideoPublishEvent;
 import live.rehope.site.endpoint.user.principle.model.UserRole;
@@ -18,6 +19,7 @@ public class MediaController {
 
     private final MediaService service;
 
+    @Inject
     public MediaController(MediaService service) {
         this.service = service;
     }
@@ -70,11 +72,18 @@ public class MediaController {
     @EndpointRoles(UserRole.ADMIN)
     public void refresh(@QueryParam("userId") Integer userId) {
         if (userId == null) {
-            throw new BadRequestResponse("no support for global refresh");
+            throw new BadRequestResponse("no support for global refresh"); // todo ?
         }
 
         // manually refresh their field
         service.refreshMediaOf(userId);
+    }
+
+    /* Watching */
+
+    @Post("/watching/{videoId}")
+    public void startWatching(Context context, String videoId) {
+
     }
 
     /* Subscriber */
@@ -97,5 +106,7 @@ public class MediaController {
 
         service.handleVideoPublishEvent(event);
     }
+
+
 
 }

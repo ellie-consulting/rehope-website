@@ -31,7 +31,6 @@ public class YouTubeClient {
 
     private static final String BASE_URL = "https://www.googleapis.com/youtube/v3";
     private static final String KEY_SUFFIX = "?key=%s";
-    private static final String VIDEO_URL = "https://youtu.be/%s";
 
     private final OkHttpClient client;
     private String key;
@@ -131,9 +130,7 @@ public class YouTubeClient {
                 String publishAtString = videoDetails.getAsJsonPrimitive("publishedAt").getAsString();
                 long publishedAt = DateUtils.fromRfc(publishAtString);
 
-                String videoUrl = createVideoUrl(videoId);
-
-                res.add(new Media(userId, channelId, videoUrl, liveStream ? MediaType.STREAM : MediaType.VIDEO, publishedAt));
+                res.add(new Media(userId, channelId, videoId, liveStream ? MediaType.STREAM : MediaType.VIDEO, publishedAt));
             }
         }
 
@@ -160,9 +157,6 @@ public class YouTubeClient {
         return "&" + key + "=" + value;
     }
 
-    private String createVideoUrl(String videoId) {
-        return VIDEO_URL.formatted(videoId);
-    }
 
     /* Example response.
     {

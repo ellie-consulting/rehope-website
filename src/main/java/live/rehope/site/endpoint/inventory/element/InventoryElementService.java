@@ -75,4 +75,9 @@ public class InventoryElementService {
         return elementRepository.getUnlockableElements(unlockObjective, unlockValue);
     }
 
+    @NotNull
+    public List<InventoryElement> getElementsByUnlockObjective(@NotNull UnlockObjective objective) {
+        return elementRepository.getUnlockableElementsByObjective(objective);
+    }
+
 }

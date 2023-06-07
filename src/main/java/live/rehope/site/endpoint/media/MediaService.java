@@ -144,7 +144,7 @@ public class MediaService implements CreatorUpdateListener {
 
     public void handleVideoPublishEvent(@NotNull VideoPublishEvent event) {
         mediaCache.refreshAll();
-        // todo
+        // todo no???
     }
 
     public MediaCache getMediaCache() {

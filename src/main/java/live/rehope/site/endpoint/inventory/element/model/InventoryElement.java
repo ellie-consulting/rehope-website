@@ -1,7 +1,10 @@
 package live.rehope.site.endpoint.inventory.element.model;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import live.rehope.site.endpoint.inventory.user.UserInventoryElement;
+
+import java.sql.Timestamp;
 
 /**
  * Represents an element that can be placed in an inventory.
@@ -22,9 +25,18 @@ public record InventoryElement(int id, ElementType type,
         return unlockObjective != null && unlockValue >= 0;
     }
 
-    public UserInventoryElement toUserInventoryElement(int userId, @Nullable String unlockCode,
-                                                       @Nullable Integer unlockContextUser, @Nullable Float unlockContextValue) {
-        return new UserInventoryElement(0, userId, id, null, unlockCode, unlockContextUser, unlockContextValue);
+    @NotNull
+    public UserInventoryElement toProgressUserElement(int userId, @Nullable Integer userContext, float progress) {
+        return new UserInventoryElement(0, userId, id, userContext,
+                new Timestamp(System.currentTimeMillis()), progress, null, null);
+    }
+
+    @NotNull
+    public UserInventoryElement toCompletedUserElement(int userId, @Nullable Integer userContext,
+                                                       @Nullable String unlockCode) {
+        return new UserInventoryElement(0, userId, id, userContext,
+                new Timestamp(System.currentTimeMillis()), unlockValue,
+                new Timestamp(System.currentTimeMillis()), unlockCode);
     }
 
 }

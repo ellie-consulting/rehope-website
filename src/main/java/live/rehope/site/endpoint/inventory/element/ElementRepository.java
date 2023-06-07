@@ -135,6 +135,17 @@ public class ElementRepository extends Repository<InventoryElement> {
     }
 
     /**
+     * Get all elements that can be unlocked by this objective.
+     *
+     * @param objective Objective.
+     * @return Unlockable elements.
+     */
+    @NotNull
+    public List<InventoryElement> getUnlockableElementsByObjective(UnlockObjective objective) {
+        return getAllWithFilter("unlock_objective", objective);
+    }
+
+    /**
      * Delete an element by its id.
      *
      * @param id Id to delete by.
@@ -163,7 +174,7 @@ public class ElementRepository extends Repository<InventoryElement> {
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
                     "id SERIAL PRIMARY KEY," +
                     "type VARCHAR(25) NOT NULL," +
-                    "unlock_objective VARCHAR(25)," +
+                    "unlock_objective VARCHAR(25) NULL," +
                     "unlock_value FLOAT," +
                     "name VARCHAR(255) NOT NULL," +
                     "description VARCHAR(255) NOT NULL," +

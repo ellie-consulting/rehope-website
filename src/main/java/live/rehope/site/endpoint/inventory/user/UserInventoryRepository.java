@@ -46,26 +46,40 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
     /**
      * Get the inventory of a user.
      * </br>
-     * Optional check for a user unlock context.
+     * Optional check for a user unlock context,
+     * and completed state.
      *
      * @param userId User id.
      * @param userContext Unlock context required.
+     * @param inProgress If null will get all, if true, will get inProgress only, otherwise just completed.
      * @return Their inventory.
      */
     @NotNull
-    public List<UserInventoryElement> getUserInventory(int userId, @Nullable Integer userContext) {
+    public List<UserInventoryElement> getUserInventory(int userId, @Nullable Integer userContext,
+                                                       @Nullable Boolean inProgress) {
         List<UserInventoryElement> res = new ArrayList<>();
 
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement;
 
+            String sql = "SELECT * FROM " + TABLE + " WHERE user_id = ?";
             if (userContext != null) {
-                statement = connection.prepareStatement("SELECT * FROM " + TABLE + " WHERE user_id = ? AND unlock_user_context = ?");
-                statement.setInt(2, userContext);
-            } else {
-                statement = connection.prepareStatement("SELECT * FROM " + TABLE + " WHERE user_id = ?");
+                sql += " AND user_context = ?";
             }
+
+            if (inProgress != null) {
+                if (inProgress) {
+                    sql += " AND unlock_time IS NULL";
+                } else {
+                    sql += " AND unlock_time IS NOT NULL";
+                }
+            }
+
+            statement = connection.prepareStatement(sql);
             statement.setInt(1, userId);
+            if (userContext != null) {
+                statement.setInt(2, userContext);
+            }
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -92,7 +106,7 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
                                       @Nullable String unlockCode, @Nullable Integer unlockUserContext, @Nullable Float unlockValue) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO " + TABLE + " (user_id, element_id, unlock_code, unlock_user_context, unlock_value) " +
+                    "INSERT INTO " + TABLE + " (user_id, element_id, unlock_user_context, unlock_code, unlock_value) " +
                             "VALUES (?, ?, ?, ?, ?)");
             statement.setInt(1, userId);
             statement.setInt(2, elementId);
@@ -122,15 +136,22 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
     public void addElementsToInventory(@NotNull List<UserInventoryElement> elements) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO " + TABLE + " (user_id, element_id, unlock_code, unlock_user_context, unlock_value)" +
-                            " VALUES (?, ?, ?, ?, ?)");
+                    "INSERT INTO " + TABLE + " (user_id, element_id, creator_context, " +
+                            "progress_start, progress, unlock_time, unlock_code)" +
+                            " VALUES (?, ?, ?, ?, ?, ?, ?)" +
+                            " ON CONFLICT (user_id, element_id, creator_context)" +
+                            " DO UPDATE SET progress = " + TABLE + ".progress + EXCLUDED.progress," +
+                            " unlock_time = EXCLUDED.unlock_time," +
+                            " unlock_code = EXCLUDED.unlock_code");
 
             for (UserInventoryElement element : elements) {
                 statement.setInt(1, element.userId());
                 statement.setInt(2, element.elementId());
-                statement.setString(3, element.unlockCode());
-                statement.setObject(4, element.unlockContextUser(), Types.INTEGER);
-                statement.setObject(5, element.unlockContextValue(), Types.FLOAT);
+                statement.setObject(3, element.creatorContext(), Types.INTEGER);
+                statement.setObject(4, element.progressStart(), Types.TIMESTAMP);
+                statement.setFloat(5, element.progress());
+                statement.setObject(6, element.unlockTime(), Types.TIMESTAMP);
+                statement.setObject(7, element.unlockCode(), Types.VARCHAR);
                 statement.addBatch();
             }
 
@@ -152,7 +173,7 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
     public void removeElementFromInventory(int userId, int elementId, @Nullable Integer contextUser) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(
-                    "DELETE FROM " + TABLE + " WHERE user_id = ? AND element_id = ? AND unlock_user_context = ?");
+                    "DELETE FROM " + TABLE + " WHERE user_id = ? AND element_id = ? AND creator_context = ?");
             statement.setInt(1, userId);
             statement.setInt(2, elementId);
             statement.setObject(3, contextUser, Types.INTEGER);
@@ -194,26 +215,31 @@ public class UserInventoryRepository extends Repository<UserInventoryElement> {
         int id = resultSet.getInt("id");
         int userId = resultSet.getInt("user_id");
         int elementId = resultSet.getInt("element_id");
+        int creatorContext = resultSet.getInt("creator_context");
+
+        Timestamp progressStart = resultSet.getTimestamp("progress_start");
+        float progress = resultSet.getFloat("progress");
+
         Timestamp unlockTime = resultSet.getTimestamp("unlock_time");
         String unlockCode = resultSet.getString("unlock_code");
-        int relatedUserId = resultSet.getInt("unlock_user_context");
-        float value = resultSet.getFloat("unlock_value");
 
-        return new UserInventoryElement(id, userId, elementId, unlockTime, unlockCode, relatedUserId, value);
+        return new UserInventoryElement(id, userId, elementId, creatorContext == 0 ? null : creatorContext,
+                progressStart, progress, unlockTime, unlockCode);
     }
 
     @Override
     protected void createTableIfNotExists() {
         try (Connection connection = datasource.getConnection()) {
             connection.prepareStatement("CREATE TABLE IF NOT EXISTS " + TABLE + " (" +
-                    "id SERIAL PRIMARY KEY," +
+                    "id SERIAL," +
                     "user_id INTEGER NOT NULL REFERENCES " + PrincipleUserRepository.TABLE + "(id) ON DELETE CASCADE," +
                     "element_id INTEGER NOT NULL REFERENCES " + ElementRepository.TABLE + "(id) ON DELETE CASCADE," +
-                    "unlock_time TIMESTAMP NOT NULL DEFAULT NOW()," +
+                    "creator_context INT REFERENCES " + PrincipleUserRepository.TABLE + "(id)," +
+                    "progress_start TIMESTAMP NOT NULL DEFAULT NOW()," +
+                    "progress FLOAT," +
+                    "unlock_time TIMESTAMP NULL," +
                     "unlock_code VARCHAR(100)," +
-                    "unlock_user_context INT REFERENCES " + PrincipleUserRepository.TABLE + "(id)," +
-                    "unlock_value FLOAT" +
-                    ")").execute();
+                    "PRIMARY KEY(user_id, element_id, creator_context))").execute();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to create user inventory table", e);
         }

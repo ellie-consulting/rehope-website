@@ -12,18 +12,47 @@ import java.sql.Timestamp;
  * @param id UserInventoryElement id.
  * @param userId User who owns this.
  * @param elementId Foreign key to the element.
+ * @param creatorContext Element context, i.e an element for watching x minutes on [context] channel.
+ * @param progressStart When progress was started.
+ * @param progress Progress to unlock the element fully.
  * @param unlockTime When this was unlocked.
  * @param unlockCode The code used to unlock it.
- * @param unlockContextUser Unlocked in the context of this user.
- * @param unlockContextValue Unlock value.
  */
-public record UserInventoryElement(int id, int userId, int elementId, Timestamp unlockTime,
-                                   @Nullable String unlockCode,
-                                   @Nullable Integer unlockContextUser, @Nullable Float unlockContextValue) {
+public record UserInventoryElement(int id, int userId, int elementId, @Nullable Integer creatorContext,
+                                   @NotNull Timestamp progressStart, float progress,
+                                   @Nullable Timestamp unlockTime, @Nullable String unlockCode) {
 
+    public static UserInventoryElement inProgress(int userId, int elementId,
+                                                  @Nullable Integer creatorContext, float progress) {
+        return new UserInventoryElement(0, userId, elementId, creatorContext, new Timestamp(System.currentTimeMillis()), progress, null, null);
+    }
+
+    public static UserInventoryElement completed(int userId, int elementId,
+                                                  @Nullable Integer creatorContext, float progress, @Nullable String unlockCode) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        return new UserInventoryElement(0, userId, elementId, creatorContext, now, progress, now, unlockCode);
+    }
 
     public boolean equalsElement(@NotNull InventoryElement element) {
         return element.id() == elementId;
+    }
+
+    public boolean willBeCompleted(@NotNull InventoryElement element, float extraProgress) {
+        return progress + extraProgress >= element.unlockValue();
+    }
+
+    public boolean hasBeenUnlocked() {
+        return unlockTime != null;
+    }
+
+    public UserInventoryElement addProgress(float progress) {
+        return new UserInventoryElement(id, userId, elementId, creatorContext,
+                progressStart, this.progress + progress, unlockTime, unlockCode);
+    }
+
+    public UserInventoryElement completed(float addedProgress) {
+        return new UserInventoryElement(id, userId, elementId, creatorContext,
+                progressStart, this.progress + progress, new Timestamp(System.currentTimeMillis()), unlockCode);
     }
 
 }

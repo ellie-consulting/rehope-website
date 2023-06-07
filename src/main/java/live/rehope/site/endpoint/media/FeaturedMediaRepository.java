@@ -47,17 +47,17 @@ public class FeaturedMediaRepository extends Repository<Media> {
     /**
      * Add a featured media.
      * </br>
-     * The url must be unique to the table.
+     * The video id must be unique to the table.
      *
      * @param media Media to add.
      */
     public void addMedia(@NotNull Media media) {
         try (Connection connection = datasource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO " + TABLE
-                    + " (user_id, channel_id, video_url, published_at) VALUES (?, ?, ?, ?) RETURNING id");
+                    + " (user_id, channel_id, video_id, published_at) VALUES (?, ?, ?, ?) RETURNING id");
             statement.setInt(1, media.userId());
             statement.setString(2, media.channelId());
-            statement.setString(3, media.url());
+            statement.setString(3, media.videoId());
             statement.setTimestamp(4, new Timestamp(media.publishedAt() == 0 ? System.currentTimeMillis() : media.publishedAt()));
 
             ResultSet resultSet = statement.executeQuery();
@@ -69,7 +69,7 @@ public class FeaturedMediaRepository extends Repository<Media> {
             }
         } catch (SQLException e) {
             if (e.getMessage().contains("unique constraint")) {
-                throw new BadRequestResponse("url already in use");
+                throw new BadRequestResponse("video id already in use");
             }
 
             getLogger().error("failed to add media " + media, e);
@@ -89,14 +89,14 @@ public class FeaturedMediaRepository extends Repository<Media> {
     }
 
     /**
-     * Remove a featured media by its url.
+     * Remove a featured media by its video id.
      *
-     * @param url Url to remove.
+     * @param videoId Id to remove.
      */
-    public void removeMediaByUrl(@NotNull String url) {
-        featuredContent.removeIf(media -> media.url().equalsIgnoreCase(url));
+    public void removeMediaByVideoId(@NotNull String videoId) {
+        featuredContent.removeIf(media -> media.videoId().equalsIgnoreCase(videoId));
 
-        deleteData("video_url", url);
+        deleteData("video_id", videoId);
     }
 
     public void removeMediaByUserId(int userId) {
@@ -118,10 +118,10 @@ public class FeaturedMediaRepository extends Repository<Media> {
         int id = resultSet.getInt("id");
         int userId = resultSet.getInt("user_id");
         String channelId = resultSet.getString("channel_id");
-        String videoUrl = resultSet.getString("video_url");
+        String videoId = resultSet.getString("video_id");
         long publishedAt = resultSet.getTimestamp("published_at").getTime();
 
-        return new Media(id, userId, channelId, videoUrl, MediaType.VIDEO, publishedAt);
+        return new Media(id, userId, channelId, videoId, MediaType.VIDEO, publishedAt);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class FeaturedMediaRepository extends Repository<Media> {
                     "id SERIAL PRIMARY KEY," +
                     "user_id INTEGER NOT NULL REFERENCES " + PrincipleUserRepository.TABLE + "(id) ON DELETE CASCADE," +
                     "channel_id VARCHAR(24) NOT NULL," +
-                    "video_url VARCHAR(64) UNIQUE NOT NULL," +
+                    "video_id VARCHAR(24) NOT NULL UNIQUE," +
                     "featured_since TIMESTAMP NOT NULL DEFAULT NOW()," +
                     "published_at TIMESTAMP NOT NULL" +
                     ");").execute();
