@@ -3,7 +3,7 @@ package live.rehope.site.bootstrap;
 import io.avaje.inject.BeanScope;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
-import io.javalin.vue.VueComponent;
+import io.javalin.http.staticfiles.Location;
 import live.rehope.site.bootstrap.config.ServerCustomizer;
 
 /**
@@ -26,11 +26,12 @@ public final class ServerBootstrap {
             throw new BadRequestResponse("Provided constant is invalid: " + exception.getMessage());
         });
 
-        javalin.get("/", new VueComponent("home"));
-        javalin.get("/login", new VueComponent("login"));
-        javalin.get("/register", new VueComponent("register"));
+        // Register public
+        javalin.updateConfig(javalinConfig -> {
+            javalinConfig.staticFiles.add("/public", Location.CLASSPATH);
+        });
 
-        javalin.get("/admin/users", new VueComponent("view-accounts"));
+        javalin.get("/", ctx -> ctx.render("public/index.html")); // injection point for React
 
         javalin.start(host, port);
     }

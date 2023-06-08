@@ -30,12 +30,14 @@ public class RehopeCustomizer implements ServerCustomizer {
 
     @Override
     public void accept(JavalinConfig config) {
-        // vue config
-        config.staticFiles.enableWebjars();
-        config.vue.vueAppName = "app";
+//        // vue config
+//        config.staticFiles.enableWebjars();
+//        config.vue.vueAppName = "app";
 
         config.jetty.sessionHandler(() -> sessionHandler);
         config.accessManager((handler, context, permittedRoles) -> {
+            // todo rate limit
+
             if (DEV) {
                 handler.handle(context);
                 return;

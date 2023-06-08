@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.avaje.config.Config;
 import jakarta.inject.Singleton;
 import live.rehope.site.util.DateUtils;
 import okhttp3.*;
@@ -13,12 +14,6 @@ import live.rehope.site.endpoint.media.model.Media;
 import live.rehope.site.endpoint.media.model.MediaType;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,8 +22,7 @@ import java.util.List;
  */
 @Singleton
 public class YouTubeClient {
-    private static final String SUB_CALLBACK = "DOMAIN/api/media/notify";
-
+    private static final String SUB_CALLBACK = Config.get("host.domain") + "/api/media/notify";
     private static final String BASE_URL = "https://www.googleapis.com/youtube/v3";
     private static final String KEY_SUFFIX = "?key=%s";
 

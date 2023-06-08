@@ -79,13 +79,6 @@ public class MediaController {
         service.refreshMediaOf(userId);
     }
 
-    /* Watching */
-
-    @Post("/watching/{videoId}")
-    public void startWatching(Context context, String videoId) {
-
-    }
-
     /* Subscriber */
 
     @Get("/notify")
@@ -106,7 +99,5 @@ public class MediaController {
 
         service.handleVideoPublishEvent(event);
     }
-
-
 
 }

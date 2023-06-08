@@ -5,16 +5,16 @@ import io.avaje.http.api.Delete;
 import io.avaje.http.api.Post;
 import io.javalin.http.Context;
 
-@Controller("/api/media/watching")
+@Controller("/api/media/{videoId}/watching")
 public class MediaViewController {
 
-    @Post("/{videoId}")
-    public void startWatching(Context context, String videoId) {
+    @Post
+    public void startWatching(Context context) {
 
     }
 
-    @Delete("/{videoId}")
-    public void stopWatching(Context context, String videoId) {
+    @Delete
+    public void stopWatching(Context context) {
 
     }
 

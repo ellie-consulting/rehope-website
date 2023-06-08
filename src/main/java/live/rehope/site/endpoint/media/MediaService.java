@@ -1,5 +1,6 @@
 package live.rehope.site.endpoint.media;
 
+import jakarta.inject.Inject;
 import live.rehope.site.endpoint.creator.model.CreatorUpdateListener;
 import live.rehope.site.endpoint.creator.model.MediaCreator;
 import live.rehope.site.endpoint.media.model.VideoPublishEvent;
@@ -18,6 +19,7 @@ public class MediaService implements CreatorUpdateListener {
     private final MediaCache mediaCache;
     private final FeaturedMediaRepository featuredRepository;
 
+    @Inject
     public MediaService(MediaCache mediaCache, FeaturedMediaRepository featuredRepository) {
         this.mediaCache = mediaCache;
         this.featuredRepository = featuredRepository;

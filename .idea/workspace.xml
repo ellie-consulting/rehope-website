@@ -4,17 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5f776b3f-d51d-4673-b2ee-792826c843ab" name="Changes" comment="creator linking + video polling">
+    <list default="true" id="5f776b3f-d51d-4673-b2ee-792826c843ab" name="Changes" comment="upgrade inventory handling + start handling media views">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/public/hi.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/bootstrap/ServerBootstrap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/bootstrap/ServerBootstrap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/bootstrap/config/RehopeCustomizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/bootstrap/config/RehopeCustomizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/datasource/Datasource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/datasource/Datasource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/datasource/PostgreDatasource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/datasource/PostgreDatasource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/FeaturedMediaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/FeaturedMediaRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/MediaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/model/Media.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/model/Media.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/view/MediaViewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/view/MediaViewController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/youtube/YouTubeClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/media/youtube/YouTubeClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/user/principle/PrincipleUserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/live/rehope/site/endpoint/user/principle/PrincipleUserRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,8 +87,8 @@
         <option value="Record" />
         <option value="package.json" />
         <option value="package-info" />
-        <option value="Enum" />
         <option value="Interface" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -106,29 +105,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;true&quot;,
-    &quot;last_directory_selection&quot;: &quot;/Users/ellie/dev/freelance/rehope-website/src/main/java&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/ellie/dev/freelance/rehope-website/src/main/resources/vue/views/admin&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "true",
+    "last_directory_selection": "/Users/ellie/dev/freelance/rehope-website/src/main/java",
+    "last_opened_file_path": "/Users/ellie/dev/freelance/rehope-website/src/main/resources/public",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/public" />
       <recent name="$PROJECT_DIR$/src/main/resources/vue/views/admin" />
       <recent name="$PROJECT_DIR$/src/main/resources/vue/views" />
     </key>
@@ -188,8 +188,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.rehope-website [assemble]" />
         <item itemvalue="Application.live.rehope.site.Main" />
+        <item itemvalue="Gradle.rehope-website [assemble]" />
       </list>
     </recent_temporary>
   </component>
@@ -243,7 +243,10 @@
       <workItem from="1685700018942" duration="33000" />
       <workItem from="1685726475841" duration="5000" />
       <workItem from="1685962479886" duration="18399000" />
-      <workItem from="1686043224014" duration="8360000" />
+      <workItem from="1686043224014" duration="8459000" />
+      <workItem from="1686134023117" duration="16092000" />
+      <workItem from="1686227111957" duration="1988000" />
+      <workItem from="1686244832657" duration="3156000" />
     </task>
     <task id="LOCAL−00001" summary="initial commit w db, princp user + inventory">
       <created>1683313627644</created>
@@ -311,7 +314,25 @@
       <option name="presentableId" value="LOCAL−00011" />
       <updated>1686049819314</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL−00012" summary="fix feature media management">
+      <created>1686053108092</created>
+      <option name="number" value="LOCAL−00012" />
+      <option name="presentableId" value="LOCAL−00012" />
+      <updated>1686053108092</updated>
+    </task>
+    <task id="LOCAL−00013" summary="config impl + preferneces">
+      <created>1686138733410</created>
+      <option name="number" value="LOCAL−00013" />
+      <option name="presentableId" value="LOCAL−00013" />
+      <updated>1686138733410</updated>
+    </task>
+    <task id="LOCAL−00014" summary="upgrade inventory handling + start handling media views">
+      <created>1686153862204</created>
+      <option name="number" value="LOCAL−00014" />
+      <option name="presentableId" value="LOCAL−00014" />
+      <updated>1686153862204</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -343,7 +364,10 @@
     <MESSAGE value="change package name to live.rehope + some endpoint refractor + additions" />
     <MESSAGE value="connect some socials :)" />
     <MESSAGE value="creator linking + video polling" />
-    <option name="LAST_COMMIT_MESSAGE" value="creator linking + video polling" />
+    <MESSAGE value="fix feature media management" />
+    <MESSAGE value="config impl + preferneces" />
+    <MESSAGE value="upgrade inventory handling + start handling media views" />
+    <option name="LAST_COMMIT_MESSAGE" value="upgrade inventory handling + start handling media views" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
